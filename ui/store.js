@@ -68,6 +68,7 @@ const subscriptionsFilter = createFilter('subscriptions', ['subscriptions']);
 const blockedFilter = createFilter('blocked', ['blockedChannels']);
 const coinSwapsFilter = createFilter('coinSwap', ['coinSwaps']);
 const settingsFilter = createBlacklistFilter('settings', ['loadedLanguages', 'language']);
+const collectionsFilter = createFilter('collections', ['builtin', 'saved', 'unpublished']);
 const whiteListedReducers = [
   'fileInfo',
   'publish',
@@ -80,6 +81,7 @@ const whiteListedReducers = [
   'coinSwap',
   'settings',
   'subscriptions',
+  'collections',
 ];
 
 const transforms = [
@@ -94,6 +96,7 @@ const transforms = [
   contentFilter,
   subscriptionsFilter,
   settingsFilter,
+  collectionsFilter,
   createCompressor(),
 ];
 
@@ -129,6 +132,9 @@ const triggerSharedStateActions = [
   ACTIONS.SYNC_CLIENT_SETTINGS,
   // Disabled until we can overwrite preferences
   LBRY_REDUX_ACTIONS.SHARED_PREFERENCE_SET,
+  LBRY_REDUX_ACTIONS.COLLECTION_EDIT,
+  LBRY_REDUX_ACTIONS.COLLECTION_DELETE,
+  LBRY_REDUX_ACTIONS.COLLECTION_NEW,
   // ACTIONS.SET_WELCOME_VERSION,
   // ACTIONS.SET_ALLOW_ANALYTICS,
 ];
@@ -166,6 +172,10 @@ const sharedStateFilters = {
   settings: { source: 'settings', property: 'sharedPreferences' },
   app_welcome_version: { source: 'app', property: 'welcomeVersion' },
   sharing_3P: { source: 'app', property: 'allowAnalytics' },
+  // builtinCollectionTest2: { source: 'collections', property: 'builtin' },
+  // savedCollectionTest2: { source: 'collections', property: 'saved' },
+  // unpublishedCollectionTest2: { source: 'collections', property: 'unpublished' },
+  // maybe save edits
 };
 
 const sharedStateCb = ({ dispatch, getState }) => {

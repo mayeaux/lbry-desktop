@@ -43,3 +43,4 @@ export const IMAGE_UPLOAD = 'image_upload';
 export const MOBILE_SEARCH = 'mobile_search';
 export const VIEW_IMAGE = 'view_image';
 export const CONFIRM_REMOVE_BTC_SWAP_ADDRESS = 'confirm_remove_btc_swap_address';
+export const COLLECTION_ADD = 'collection_add';

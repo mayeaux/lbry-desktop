@@ -7,6 +7,4 @@ const select = (state) => ({
   searchInLanguage: makeSelectClientSetting(SETTINGS.SEARCH_IN_LANGUAGE)(state),
 });
 
-const perform = (dispatch) => ({});
-
-export default connect(select, perform)(ClaimList);
+export default connect(select)(ClaimList);

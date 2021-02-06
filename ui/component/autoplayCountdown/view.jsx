@@ -6,7 +6,6 @@ import I18nMessage from 'component/i18nMessage';
 import { formatLbryUrlForWeb } from 'util/url';
 import { withRouter } from 'react-router';
 import debounce from 'util/debounce';
-
 const DEBOUNCE_SCROLL_HANDLER_MS = 150;
 const CLASSNAME_AUTOPLAY_COUNTDOWN = 'autoplay-countdown';
 
@@ -18,6 +17,8 @@ type Props = {
   doSetPlayingUri: ({ uri: ?string }) => void,
   doPlayUri: string => void,
   modal: { id: string, modalProps: {} },
+  collectionId?: string,
+  collectionIndex?: number,
 };
 
 function AutoplayCountdown(props: Props) {
@@ -29,6 +30,8 @@ function AutoplayCountdown(props: Props) {
     isFloating,
     history: { push },
     modal,
+    collectionId,
+    collectionIndex,
   } = props;
   const nextTitle = nextRecommendedClaim && nextRecommendedClaim.value && nextRecommendedClaim.value.title;
 
@@ -44,6 +47,12 @@ function AutoplayCountdown(props: Props) {
   let navigateUrl;
   if (nextTitle) {
     navigateUrl = formatLbryUrlForWeb(nextRecommendedUri);
+    if (collectionId) {
+      const collectionParams = new URLSearchParams();
+      collectionParams.set('pl', collectionId);
+      collectionParams.set('plindex', collectionIndex ? collectionIndex + 1 : 1);
+      navigateUrl = navigateUrl + `?` + collectionParams.toString();
+    }
   }
 
   const doNavigate = useCallback(() => {

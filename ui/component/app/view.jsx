@@ -61,6 +61,7 @@ type Props = {
   },
   fetchAccessToken: () => void,
   fetchChannelListMine: () => void,
+  fetchCollectionListMine: () => void,
   signIn: () => void,
   requestDownloadUpgrade: () => void,
   onSignedIn: () => void,
@@ -94,6 +95,7 @@ function App(props: Props) {
     user,
     fetchAccessToken,
     fetchChannelListMine,
+    fetchCollectionListMine,
     signIn,
     autoUpdateDownloaded,
     isUpgradeAvailable,
@@ -146,6 +148,7 @@ function App(props: Props) {
   const useCustomScrollbar = !IS_MAC;
   const hasMyChannels = myChannelUrls && myChannelUrls.length > 0;
   const hasNoChannels = myChannelUrls && myChannelUrls.length === 0;
+
   const shouldMigrateLanguage = LANGUAGE_MIGRATIONS[language];
   const hasActiveChannelClaim = activeChannelClaim !== undefined;
 
@@ -233,8 +236,9 @@ function App(props: Props) {
 
     // @if TARGET='app'
     fetchChannelListMine(); // This is fetched after a user is signed in on web
+    fetchCollectionListMine();
     // @endif
-  }, [appRef, fetchAccessToken, fetchChannelListMine]);
+  }, [appRef, fetchAccessToken, fetchChannelListMine, fetchCollectionListMine]);
 
   useEffect(() => {
     // $FlowFixMe

@@ -10,6 +10,7 @@ import { buildURI } from 'lbry-redux';
 import * as RENDER_MODES from 'constants/file_render_modes';
 import { useIsMobile } from 'effects/use-screensize';
 import ClaimSupportButton from 'component/claimSupportButton';
+import ClaimCollectionAddButton from 'component/claimCollectionAddButton';
 import { useHistory } from 'react-router';
 import FileReactions from 'component/fileReactions';
 
@@ -84,6 +85,7 @@ function FileActions(props: Props) {
     <>
       {ENABLE_FILE_REACTIONS && <FileReactions uri={uri} />}
       <ClaimSupportButton uri={uri} fileAction />
+      <ClaimCollectionAddButton uri={uri} fileAction />
       <Button
         button="alt"
         className="button--file-action"

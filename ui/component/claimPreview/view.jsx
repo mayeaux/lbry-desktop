@@ -3,7 +3,7 @@ import type { Node } from 'react';
 import React, { useEffect, forwardRef } from 'react';
 import { NavLink, withRouter } from 'react-router-dom';
 import classnames from 'classnames';
-import { parseURI } from 'lbry-redux';
+import { parseURI, COLLECTIONS_CONSTS } from 'lbry-redux';
 import { formatLbryUrlForWeb } from 'util/url';
 import { isEmpty } from 'util/object';
 import FileThumbnail from 'component/fileThumbnail';
@@ -25,6 +25,8 @@ import ClaimPreviewLoading from './claim-preview-loading';
 import ClaimPreviewHidden from './claim-preview-no-mature';
 import ClaimPreviewNoContent from './claim-preview-no-content';
 import { ENABLE_NO_SOURCE_CLAIMS } from 'config';
+import Button from 'component/button';
+import * as ICONS from 'constants/icons';
 
 type Props = {
   uri: string,
@@ -70,6 +72,9 @@ type Props = {
   repostUrl?: string,
   hideMenu?: boolean,
   isLivestream?: boolean,
+  collectionId?: string,
+  collectionIndex?: string,
+  editCollection: (string, CollectionUpdateParams) => void,
 };
 
 const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
@@ -120,12 +125,16 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
     hideMenu = false,
     // repostUrl,
     isLivestream,
+    collectionId,
+    collectionIndex,
+    editCollection,
   } = props;
   const WrapperElement = wrapperElement || 'li';
   const shouldFetch =
     claim === undefined || (claim !== null && claim.value_type === 'channel' && isEmpty(claim.meta) && !pending);
   const abandoned = !isResolvingUri && !claim;
-  const shouldHideActions = hideActions || type === 'small' || type === 'tooltip';
+  const isMyCollection = collectionId && (claimIsMine || collectionId.includes('-'));
+  const shouldHideActions = hideActions || isMyCollection || type === 'small' || type === 'tooltip';
   const canonicalUrl = claim && claim.canonical_url;
   let isValid = false;
   if (uri) {
@@ -141,7 +150,13 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
   const contentUri = claim && isRepost ? claim.canonical_url || claim.permanent_url : uri;
   const isChannelUri = isValid ? parseURI(contentUri).isChannel : false;
   const signingChannel = claim && claim.signing_channel;
-  const navigateUrl = formatLbryUrlForWeb((claim && claim.canonical_url) || uri || '/');
+  let navigateUrl = formatLbryUrlForWeb((claim && claim.canonical_url) || uri || '/');
+  if (collectionId) {
+    const collectionParams = new URLSearchParams();
+    collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_ID, collectionId);
+    if (collectionIndex) collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_INDEX, collectionIndex);
+    navigateUrl = navigateUrl + `?` + collectionParams.toString();
+  }
   const navLinkProps = {
     to: navigateUrl,
     onClick: (e) => e.stopPropagation(),
@@ -310,6 +325,45 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                 {!pending && (
                   <>
                     {renderActions && claim && renderActions(claim)}
+                    {isMyCollection && (
+                      <span className="help">
+                      <Button
+                        button="alt"
+                        disabled={collectionIndex === 0}
+                        icon={ICONS.UP}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (editCollection) {
+                            // $FlowFixMe
+                            editCollection(collectionId, { order: { from: collectionIndex, to: collectionIndex - 1 } });
+                          }
+                        }}
+                      />
+                      <Button
+                        button="alt"
+                        icon={ICONS.DOWN}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          if (editCollection) {
+                            // $FlowFixMe
+                            editCollection(collectionId, { order: { from: collectionIndex, to: collectionIndex + 1 } });
+                          }
+                        }}
+                      />
+                      <Button
+                        button="alt"
+                        icon={ICONS.REMOVE}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          e.stopPropagation();
+                          // $FlowFixMe
+                          if (editCollection) editCollection(collectionId, { claims: [claim], remove: true });
+                        }}
+                      />
+                    </span>
+                    )}
                     {shouldHideActions || renderActions ? null : actions !== undefined ? (
                       actions
                     ) : (

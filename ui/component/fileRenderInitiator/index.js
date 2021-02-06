@@ -22,6 +22,7 @@ import {
 import FileRenderInitiator from './view';
 import { doAnaltyicsPurchaseEvent } from 'redux/actions/app';
 
+// get collectionId and collectionIndex and feed it to setPlayingUri
 const select = (state, props) => ({
   thumbnail: makeSelectThumbnailForUri(props.uri)(state),
   fileInfo: makeSelectFileInfoForUri(props.uri)(state),

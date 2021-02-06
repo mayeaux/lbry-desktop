@@ -22,6 +22,7 @@ import ClaimSupportButton from 'component/claimSupportButton';
 import ChannelStakedIndicator from 'component/channelStakedIndicator';
 import ClaimMenuList from 'component/claimMenuList';
 import Yrbl from 'component/yrbl';
+import ClaimCollectionAddButton from 'component/claimCollectionAddButton';
 
 export const PAGE_VIEW_QUERY = `view`;
 const ABOUT_PAGE = `about`;
@@ -164,6 +165,7 @@ function ChannelPage(props: Props) {
           {!channelIsBlackListed && <ShareButton uri={uri} />}
           {!(isBlocked || isMuted) && <ClaimSupportButton uri={uri} />}
           {!(isBlocked || isMuted) && (!channelIsBlackListed || isSubscribed) && <SubscribeButton uri={permanentUrl} />}
+          <ClaimCollectionAddButton uri={uri} fileAction />
           <ClaimMenuList uri={claim.permanent_url} inline />
         </div>
         {cover && <img className={classnames('channel-cover__custom')} src={cover} />}
