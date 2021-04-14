@@ -2,6 +2,7 @@
 import * as PAGES from 'constants/pages';
 import * as ICONS from 'constants/icons';
 import * as PUBLISH_MODES from 'constants/publish_types';
+import I18nMessage from 'component/i18nMessage';
 import React from 'react';
 import Page from 'component/page';
 import Spinner from 'component/spinner';
@@ -22,11 +23,12 @@ type Props = {
   fetchingChannels: boolean,
   activeChannelClaim: ?ChannelClaim,
   pendingClaims: Array<Claim>,
+  doNewLivestream: (string) => void,
 };
 
 export default function LivestreamSetupPage(props: Props) {
   const LIVESTREAM_CLAIM_POLL_IN_MS = 60000;
-  const { channels, fetchingChannels, activeChannelClaim, pendingClaims } = props;
+  const { channels, fetchingChannels, activeChannelClaim, pendingClaims, doNewLivestream } = props;
 
   const [sigData, setSigData] = React.useState({ signature: undefined, signing_ts: undefined });
   const [showHelpTest, setShowHelpTest] = usePersistedState('livestream-help-seen', true);
@@ -161,16 +163,13 @@ export default function LivestreamSetupPage(props: Props) {
     }
   }, [liveStreamClaimsStr, prevLiveStreamClaimsStr, localPendingStr, setLocalPending]);
 
-  React.useEffect(() => {
-    let checkClaimsInterval;
-    if (!activeChannelClaimStr) return;
-    const channelClaim = JSON.parse(activeChannelClaimStr);
-
-    function checkLivestreamClaims() {
+  const checkLivestreams = React.useCallback(
+    function checkLivestreamClaims(channelClaimId, setLivestreamClaims, setSpin) {
       Lbry.claim_search({
-        channel_ids: [channelClaim.claim_id],
+        channel_ids: [channelClaimId],
         has_no_source: true,
         claim_type: ['stream'],
+        include_purchase_receipt: true,
       })
         .then((res) => {
           if (res && res.items && res.items.length > 0) {
@@ -184,17 +183,27 @@ export default function LivestreamSetupPage(props: Props) {
           setLivestreamClaims([]);
           setSpin(false);
         });
-    }
+    },
+    [activeChannelId]
+  );
+  React.useEffect(() => {
+    let checkClaimsInterval;
+    if (!activeChannelClaimStr) return;
+    const channelClaim = JSON.parse(activeChannelClaimStr);
+
     if (!checkClaimsInterval) {
-      checkLivestreamClaims();
-      checkClaimsInterval = setInterval(checkLivestreamClaims, LIVESTREAM_CLAIM_POLL_IN_MS);
+      checkLivestreams(channelClaim.claim_id, setLivestreamClaims, setSpin);
+      checkClaimsInterval = setInterval(
+        () => checkLivestreams(channelClaim.claim_id, setLivestreamClaims, setSpin),
+        LIVESTREAM_CLAIM_POLL_IN_MS
+      );
     }
     return () => {
       if (checkClaimsInterval) {
         clearInterval(checkClaimsInterval);
       }
     };
-  }, [activeChannelClaimStr, pendingLength, setSpin]);
+  }, [activeChannelClaimStr, pendingLength, setSpin, checkLivestreams]);
 
   return (
     <Page>
@@ -277,6 +286,21 @@ export default function LivestreamSetupPage(props: Props) {
                   <div className="section">
                     <ClaimList
                       header={__('Your livestream uploads')}
+                      empty={
+                        <I18nMessage
+                          tokens={{
+                            check_again: (
+                              <Button
+                                button="link"
+                                onClick={() => checkLivestreams(activeChannelId, setLivestreamClaims, setSpin)}
+                                label={__('Check again')}
+                              />
+                            ),
+                          }}
+                        >
+                          Nothing here yet. %check_again%
+                        </I18nMessage>
+                      }
                       uris={livestreamClaims
                         .filter((c) => !pendingLiveStreamClaims.some((p) => p.permanent_url === c.permanent_url))
                         .map((claim) => claim.permanent_url)}
@@ -288,13 +312,25 @@ export default function LivestreamSetupPage(props: Props) {
               <Yrbl
                 className="livestream__publish-intro"
                 title={__('No livestream publishes found')}
-                subtitle={__('You need to upload your livestream details before you can go live.')}
+                subtitle={__(
+                  'You need to upload your livestream details before you can go live. If you already created one in this channel, it should appear soon.'
+                )}
                 actions={
                   <div className="section__actions">
                     <Button
                       button="primary"
-                      navigate={`/$/${PAGES.UPLOAD}?type=${PUBLISH_MODES.LIVESTREAM.toLowerCase()}`}
+                      onClick={() =>
+                        doNewLivestream(`/$/${PAGES.UPLOAD}?type=${PUBLISH_MODES.LIVESTREAM.toLowerCase()}`)
+                      }
                       label={__('Create A Livestream')}
+                    />
+                    <Button
+                      button="alt"
+                      onClick={() => {
+                        setSpin(true);
+                        checkLivestreams(activeChannelId, setLivestreamClaims, setSpin);
+                      }}
+                      label={__('Check again...')}
                     />
                   </div>
                 }

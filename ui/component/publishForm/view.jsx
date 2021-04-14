@@ -137,19 +137,20 @@ function PublishForm(props: Props) {
     (activeChannelStakedLevel >= CHANNEL_STAKED_LEVEL_LIVESTREAM || user.odysee_live_enabled);
   // $FlowFixMe
   const AVAILABLE_MODES = Object.values(PUBLISH_MODES).filter((mode) => {
+    // $FlowFixMe
+    const _mode = mode.toLowerCase();
     if (editingURI) {
       if (isPostClaim) {
-        return mode === PUBLISH_MODES.POST;
+        return _mode === PUBLISH_MODES.POST;
       } else if (isLivestreamClaim) {
-        return mode === PUBLISH_MODES.LIVESTREAM && enableLivestream;
+        return _mode === PUBLISH_MODES.LIVESTREAM && enableLivestream;
       } else {
-        return mode === PUBLISH_MODES.FILE;
+        return _mode === PUBLISH_MODES.FILE;
       }
+    } else if (uploadType) {
+      return _mode === uploadType && (_mode !== PUBLISH_MODES.LIVESTREAM || enableLivestream);
     } else {
-      if (mode === PUBLISH_MODES.LIVESTREAM) {
-        return enableLivestream;
-      }
-      return true;
+      return _mode !== PUBLISH_MODES.LIVESTREAM || enableLivestream;
     }
   });
 
@@ -208,7 +209,9 @@ function PublishForm(props: Props) {
     myClaimForUri && myClaimForUri.value && myClaimForUri.value.source
       ? myClaimForUri.value.source.media_type
       : undefined;
-  const claimChannelId = myClaimForUri && myClaimForUri.signing_channel && myClaimForUri.signing_channel.claim_id;
+  const claimChannelId =
+    (myClaimForUri && myClaimForUri.signing_channel && myClaimForUri.signing_channel.claim_id) ||
+    (activeChannelClaim && activeChannelClaim.claim_id);
 
   const nameEdited = isStillEditing && name !== prevName;
 
@@ -283,10 +286,10 @@ function PublishForm(props: Props) {
 
   useEffect(() => {
     const signedMessage = JSON.parse(signedMessageStr);
-    if (claimChannelId && isLivestreamClaim && signedMessage.signature) {
+    if (claimChannelId && signedMessage.signature) {
       fetchLivestreams(claimChannelId, signedMessage.signature, signedMessage.signing_ts);
     }
-  }, [claimChannelId, isLivestreamClaim, signedMessageStr]);
+  }, [claimChannelId, signedMessageStr]);
 
   const isLivestreamMode = mode === PUBLISH_MODES.LIVESTREAM;
   let submitLabel;
@@ -576,7 +579,7 @@ function PublishForm(props: Props) {
 
       {!publishing && (
         <div className={classnames({ 'card--disabled': formDisabled })}>
-          {mode === PUBLISH_MODES.FILE && <PublishDescription disabled={formDisabled} />}
+          {mode !== PUBLISH_MODES.POST && <PublishDescription disabled={formDisabled} />}
           <Card actions={<SelectThumbnail livestreamdData={livestreamData} />} />
           <TagsSelect
             suggestMature={!SIMPLE_SITE}
