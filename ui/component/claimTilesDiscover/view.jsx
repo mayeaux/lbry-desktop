@@ -8,7 +8,6 @@ import ClaimPreviewTile from 'component/claimPreviewTile';
 import { useHistory } from 'react-router';
 
 type Props = {
-  prefixUris?: Array<string>,
   uris: Array<string>,
   doClaimSearch: ({}) => void,
   showNsfw: boolean,
@@ -37,6 +36,8 @@ type Props = {
   limitClaimsPerChannel?: number,
   hasNoSource?: boolean,
   renderProperties?: (Claim) => ?Node,
+  streamTypes?: Array<string>,
+  // pin?: boolean,
 };
 
 function ClaimTilesDiscover(props: Props) {
@@ -55,18 +56,19 @@ function ClaimTilesDiscover(props: Props) {
     languages,
     claimType,
     streamTypes,
-    prefixUris,
     timestamp,
     feeAmount,
     limitClaimsPerChannel,
     fetchingClaimSearchByQuery,
     hasNoSource,
     renderProperties,
+    // pin,
   } = props;
   const { location } = useHistory();
   const urlParams = new URLSearchParams(location.search);
   const feeAmountInUrl = urlParams.get('fee_amount');
-  const feeAmountParam = feeAmountInUrl || feeAmount;
+  const feeAmountParam = feeAmountInUrl || feeAmount || CS.FEE_AMOUNT_ONLY_FREE;
+
   const options: {
     page_size: number,
     no_totals: boolean,
@@ -140,11 +142,22 @@ function ClaimTilesDiscover(props: Props) {
   }
 
   const claimSearchCacheQuery = createNormalizedClaimSearchKey(options);
-  const uris = (prefixUris || []).concat(claimSearchByQuery[claimSearchCacheQuery] || []);
+  const uris = claimSearchByQuery[claimSearchCacheQuery] || [];
+
   // Don't use the query from createNormalizedClaimSearchKey for the effect since that doesn't include page & release_time
   const optionsStringForEffect = JSON.stringify(options);
   const isLoading = fetchingClaimSearchByQuery[claimSearchCacheQuery];
   const shouldPerformSearch = !isLoading && uris.length === 0;
+
+  // const fixUri = 'lbry://@samtime#1/us-gov-tries-suing-a-cryptocurrency-lbry#8';
+  // if (pin && uris && uris.length > 2 && window.location.pathname === '/') {
+  //   if (uris.indexOf(fixUri) !== -1) {
+  //     uris.splice(uris.indexOf(fixUri), 1);
+  //   } else {
+  //     uris.pop();
+  //   }
+  //   uris.splice(2, 0, fixUri);
+  // }
 
   React.useEffect(() => {
     if (shouldPerformSearch) {

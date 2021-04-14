@@ -79,6 +79,9 @@ function HomePage(props: Props) {
           </p>
         </div>
       )}
+
+      <h1 className="home__meme">{__("i got 99 securities but LBC ain't one.")}</h1>
+
       {rowData.map(({ title, route, link, icon, help, options = {} }, index) => (
         <div key={title} className="claim-grid__wrapper">
           {index !== 0 && title && typeof title === 'string' && (
@@ -91,7 +94,7 @@ function HomePage(props: Props) {
             </h1>
           )}
 
-          <ClaimTilesDiscover {...options} />
+          <ClaimTilesDiscover {...options} pin={route === `/$/${PAGES.GENERAL}`} />
           {(route || link) && (
             <Button
               className="claim-grid__title--secondary"

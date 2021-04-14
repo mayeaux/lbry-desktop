@@ -16,7 +16,7 @@ export default function LivestreamLink(props: Props) {
   const { push } = useHistory();
   const [livestreamClaim, setLivestreamClaim] = React.useState(false);
   const [isLivestreaming, setIsLivestreaming] = React.useState(false);
-  const livestreamChannelId = channelClaim.claim_id || ''; // TODO: fail in a safer way, probably
+  const livestreamChannelId = (channelClaim && channelClaim.claim_id) || ''; // TODO: fail in a safer way, probably
 
   React.useEffect(() => {
     if (livestreamChannelId) {
