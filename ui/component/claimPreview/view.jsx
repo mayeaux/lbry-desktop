@@ -145,7 +145,11 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
   const navigateUrl = formatLbryUrlForWeb((claim && claim.canonical_url) || uri || '/');
   const navLinkProps = {
     to: navigateUrl,
-    onClick: (e) => e.stopPropagation(),
+    onClick: (e) => {
+      console.log('click');
+      window.startTime = performance.now();
+      e.stopPropagation();
+    },
   };
 
   // do not block abandoned and nsfw claims if showUserBlocked is passed
@@ -190,6 +194,9 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
   const thumbnailUrl = useGetThumbnail(contentUri, claim, streamingUrl, getFile, shouldHide);
 
   function handleOnClick(e) {
+    console.log('clicked');
+    window.startTime = performance.now();
+
     if (onClick) {
       onClick(e);
     }

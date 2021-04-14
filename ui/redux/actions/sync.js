@@ -118,6 +118,7 @@ export function doSyncLoop(noInterval) {
           const state = getState();
           const syncEnabled = makeSelectClientSetting(SETTINGS.ENABLE_SYNC)(state);
           if (syncEnabled) {
+            console.log('sync loop');
             dispatch(doGetSyncDesktop((error, hasNewData) => dispatch(doHandleSyncComplete(error, hasNewData))));
             dispatch(doAnalyticsTagSync());
           }
@@ -154,6 +155,8 @@ export function doGetSync(passedPassword, callback) {
     });
 
     const data = {};
+
+    console.log('doGetSync');
 
     Lbry.wallet_status()
       .then((status) => {

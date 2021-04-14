@@ -78,6 +78,12 @@ export default function FileRenderInitiator(props: Props) {
   );
 
   useEffect(() => {
+    if (window.startTime) {
+      console.log('page:', performance.now() - window.startTime, 'ms');
+    }
+  }, []);
+
+  useEffect(() => {
     // This is just for beginning to download a file
     // Play/Pause/Fullscreen will be handled by the respective viewers because not every file type should behave the same
     function handleKeyDown(e: KeyboardEvent) {

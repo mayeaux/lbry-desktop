@@ -73,7 +73,11 @@ function ClaimPreviewTile(props: Props) {
 
   const navLinkProps = {
     to: navigateUrl,
-    onClick: (e) => e.stopPropagation(),
+    onClick: (e) => {
+      console.log('click');
+      window.startTime = performance.now();
+      e.stopPropagation();
+    },
   };
 
   let isChannel;

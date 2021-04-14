@@ -90,7 +90,7 @@ Lbry.setOverride(
 );
 // @endif
 
-const startTime = Date.now();
+const startTime = performance.now();
 analytics.startupEvent();
 
 // @if TARGET='app'
@@ -264,8 +264,11 @@ function AppWrapper() {
       app.store.dispatch(doBlackListedOutpointsSubscribe());
       app.store.dispatch(doFilteredOutpointsSubscribe());
 
-      const appReadyTime = Date.now();
+      const appReadyTime = performance.now();
       const timeToStart = appReadyTime - startTime;
+      console.log('----------------------');
+      console.log('timeToStart:', timeToStart.toFixed(3), 'ms');
+      console.log('----------------------');
       analytics.readyEvent(timeToStart);
     }
   }, [readyToLaunch, persistDone]);

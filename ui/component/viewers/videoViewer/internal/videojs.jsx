@@ -541,6 +541,8 @@ export default React.memo<Props>(function VideoJs(props: Props) {
       }
 
       let type = sourceType;
+      const curSource = player.currentSrc();
+      const curType = player.currentType();
 
       // override type if we receive an .m3u8 (transcoded mp4)
       if (response && response.redirected && response.url && response.url.endsWith('m3u8')) {
@@ -549,24 +551,35 @@ export default React.memo<Props>(function VideoJs(props: Props) {
 
       // Update player poster
       // note: the poster prop seems to return null usually.
-      if (poster) player.poster(poster);
+      if (poster) {
+        console.log('player.poster =', poster);
+        player.poster(poster);
+      }
 
-      // Update player source
-      player.src({
-        src: source,
-        type: type,
-      });
+      const FORCE_UPDATE = false;
+
+      if (FORCE_UPDATE || curSource !== source || curType !== type) {
+        console.log('video src loaded');
+        // Update player source
+        player.src({
+          src: source,
+          type: type,
+        });
+      }
 
       // Add quality selector to player
       player.hlsQualitySelector({
         displayCurrentQuality: true,
       });
 
-      // Update player source
-      player.src({
-        src: source,
-        type: type,
-      });
+      if (FORCE_UPDATE || curSource !== source || curType !== type) {
+        console.log('video src loaded');
+        // Update player source
+        player.src({
+          src: source,
+          type: type,
+        });
+      }
 
       // PR #5570: Temp workaround to avoid double Play button until the next re-architecture.
       if (!player.paused()) {

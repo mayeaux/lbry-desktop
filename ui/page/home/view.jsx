@@ -9,6 +9,7 @@ import ClaimTilesDiscover from 'component/claimTilesDiscover';
 import Icon from 'component/common/icon';
 import I18nMessage from 'component/i18nMessage';
 import LbcSymbol from 'component/common/lbc-symbol';
+import WaitUntilOnPage from "../../component/common/wait-until-on-page";
 
 type Props = {
   authenticated: boolean,
@@ -34,6 +35,10 @@ function HomePage(props: Props) {
     showIndividualTags,
     showNsfw
   );
+
+  React.useEffect(() => {
+    console.log('HomePage mounted');
+  }, []);
 
   return (
     <Page fullWidthPage>
@@ -98,7 +103,9 @@ function HomePage(props: Props) {
             </h1>
           )}
 
-          <ClaimTilesDiscover {...options} pin={route === `/$/${PAGES.GENERAL}`} />
+          {/*<WaitUntilOnPage>*/}
+            <ClaimTilesDiscover {...options} pin={route === `/$/${PAGES.GENERAL}`} />
+	    	  {/*</WaitUntilOnPage>*/}
           {(route || link) && (
             <Button
               className="claim-grid__title--secondary"

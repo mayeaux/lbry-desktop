@@ -127,6 +127,8 @@ function VideoViewer(props: Props) {
   breaks because some browsers (e.g. Firefox) block autoplay but leave the player.play Promise pending */
   const [isLoading, setIsLoading] = useState(false);
 
+  const a = React.useRef();
+
   // force everything to recent when URI changes, can cause weird corner cases otherwise (e.g. navigate while autoplay is true)
   useEffect(() => {
     if (uri && previousUri && uri !== previousUri) {
@@ -205,6 +207,9 @@ function VideoViewer(props: Props) {
   }
 
   const onPlayerReady = useCallback((player: Player) => {
+    console.log('onPlayerReady');
+    a.current = performance.now();
+
     if (!embedded) {
       player.muted(muted);
       player.volume(volume);
@@ -246,6 +251,17 @@ function VideoViewer(props: Props) {
     player.on('tracking:firstplay', doTrackingFirstPlay);
     player.on('ended', onEnded);
     player.on('play', onPlay);
+    player.on('loadeddata', () => console.log('loadeddata'));
+    player.on('playing', () => {
+      if (window.startTime) {
+        const now = performance.now();
+        const clickDelta = now - window.startTime;
+        const bufferDelta = now - a.current;
+        console.log('playing: click:', clickDelta, 'ms, buffer =', bufferDelta, 'ms');
+      } else {
+        console.log('playing');
+      }
+    });
     player.on('pause', () => {
       setIsPlaying(false);
       handlePosition(player);
