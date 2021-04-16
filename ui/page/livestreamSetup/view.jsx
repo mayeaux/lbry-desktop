@@ -170,6 +170,7 @@ export default function LivestreamSetupPage(props: Props) {
       Lbry.claim_search({
         channel_ids: [channelClaim.claim_id],
         has_no_source: true,
+        include_purchase_receipt: true,
         claim_type: ['stream'],
       })
         .then((res) => {
