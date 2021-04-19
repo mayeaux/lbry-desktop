@@ -208,7 +208,9 @@ function PublishForm(props: Props) {
     myClaimForUri && myClaimForUri.value && myClaimForUri.value.source
       ? myClaimForUri.value.source.media_type
       : undefined;
-  const claimChannelId = myClaimForUri && myClaimForUri.signing_channel && myClaimForUri.signing_channel.claim_id;
+  const claimChannelId =
+    (myClaimForUri && myClaimForUri.signing_channel && myClaimForUri.signing_channel.claim_id) ||
+    (activeChannelClaim && activeChannelClaim.claim_id);
 
   const nameEdited = isStillEditing && name !== prevName;
 
@@ -282,10 +284,10 @@ function PublishForm(props: Props) {
 
   useEffect(() => {
     const signedMessage = JSON.parse(signedMessageStr);
-    if (claimChannelId && isLivestreamClaim && signedMessage.signature) {
+    if (claimChannelId && signedMessage.signature) {
       fetchLivestreams(claimChannelId, signedMessage.signature, signedMessage.signing_ts);
     }
-  }, [claimChannelId, isLivestreamClaim, signedMessageStr]);
+  }, [claimChannelId, signedMessageStr]);
 
   const isLivestreamMode = mode === PUBLISH_MODES.LIVESTREAM;
   let submitLabel;
