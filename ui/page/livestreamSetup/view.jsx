@@ -171,6 +171,7 @@ export default function LivestreamSetupPage(props: Props) {
         channel_ids: [channelClaim.claim_id],
         has_no_source: true,
         claim_type: ['stream'],
+        include_purchase_receipt: true,
       })
         .then((res) => {
           if (res && res.items && res.items.length > 0) {
