@@ -178,9 +178,9 @@ function PublishForm(props: Props) {
     }
   } else {
     if (editingURI) {
-      customSubtitle = __('Update your video');
+      customSubtitle = __('Update your video/audio');
     } else {
-      customSubtitle = __('Upload that unlabeled video you found behind the TV in 1991');
+      customSubtitle = __('Upload that unlabeled video or cassette you found behind the TV in 1991');
     }
   }
 
