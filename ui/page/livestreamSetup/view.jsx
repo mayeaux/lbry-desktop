@@ -22,11 +22,12 @@ type Props = {
   fetchingChannels: boolean,
   activeChannelClaim: ?ChannelClaim,
   pendingClaims: Array<Claim>,
+  doNewLivestream: (string) => void,
 };
 
 export default function LivestreamSetupPage(props: Props) {
   const LIVESTREAM_CLAIM_POLL_IN_MS = 60000;
-  const { channels, fetchingChannels, activeChannelClaim, pendingClaims } = props;
+  const { channels, fetchingChannels, activeChannelClaim, pendingClaims, doNewLivestream } = props;
 
   const [sigData, setSigData] = React.useState({ signature: undefined, signing_ts: undefined });
   const [showHelpTest, setShowHelpTest] = usePersistedState('livestream-help-seen', true);
@@ -294,7 +295,9 @@ export default function LivestreamSetupPage(props: Props) {
                   <div className="section__actions">
                     <Button
                       button="primary"
-                      navigate={`/$/${PAGES.UPLOAD}?type=${PUBLISH_MODES.LIVESTREAM.toLowerCase()}`}
+                      onClick={() =>
+                        doNewLivestream(`/$/${PAGES.UPLOAD}?type=${PUBLISH_MODES.LIVESTREAM.toLowerCase()}`)
+                      }
                       label={__('Create A Livestream')}
                     />
                   </div>
