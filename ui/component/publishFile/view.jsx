@@ -437,7 +437,7 @@ function PublishFile(props: Props) {
     updatePublishForm(publishFormParams);
   }
 
-  const showFileUpload = mode === PUBLISH_MODES.FILE || (mode === PUBLISH_MODES.LIVESTREAM && hasLivestreamData);
+  const showFileUpload = mode === PUBLISH_MODES.FILE;
   const isPublishPost = mode === PUBLISH_MODES.POST;
 
   return (
