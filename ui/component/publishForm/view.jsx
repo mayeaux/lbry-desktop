@@ -578,7 +578,7 @@ function PublishForm(props: Props) {
 
       {!publishing && (
         <div className={classnames({ 'card--disabled': formDisabled })}>
-          {mode === PUBLISH_MODES.FILE && <PublishDescription disabled={formDisabled} />}
+          {mode !== PUBLISH_MODES.POST && <PublishDescription disabled={formDisabled} />}
           <Card actions={<SelectThumbnail livestreamdData={livestreamData} />} />
           <TagsSelect
             suggestMature={!SIMPLE_SITE}
