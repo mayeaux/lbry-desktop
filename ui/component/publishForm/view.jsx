@@ -137,19 +137,20 @@ function PublishForm(props: Props) {
     (activeChannelStakedLevel >= CHANNEL_STAKED_LEVEL_LIVESTREAM || user.odysee_live_enabled);
   // $FlowFixMe
   const AVAILABLE_MODES = Object.values(PUBLISH_MODES).filter((mode) => {
+    // $FlowFixMe
+    const _mode = mode.toLowerCase();
     if (editingURI) {
       if (isPostClaim) {
-        return mode === PUBLISH_MODES.POST;
+        return _mode === PUBLISH_MODES.POST;
       } else if (isLivestreamClaim) {
-        return mode === PUBLISH_MODES.LIVESTREAM && enableLivestream;
+        return _mode === PUBLISH_MODES.LIVESTREAM && enableLivestream;
       } else {
-        return mode === PUBLISH_MODES.FILE;
+        return _mode === PUBLISH_MODES.FILE;
       }
+    } else if (uploadType) {
+      return _mode === uploadType && (_mode !== PUBLISH_MODES.LIVESTREAM || enableLivestream);
     } else {
-      if (mode === PUBLISH_MODES.LIVESTREAM) {
-        return enableLivestream;
-      }
-      return true;
+      return _mode !== PUBLISH_MODES.LIVESTREAM || enableLivestream;
     }
   });
 
