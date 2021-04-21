@@ -119,7 +119,7 @@ function PublishFile(props: Props) {
 
   const livestreamDataStr = JSON.stringify(livestreamData);
   const hasLivestreamData = livestreamData && Boolean(livestreamData.length);
-  const showSourceSelector = isLivestreamClaim || hasLivestreamData;
+  const showSourceSelector = isLivestreamClaim || (hasLivestreamData && mode !== PUBLISH_MODES.LIVESTREAM);
 
   const [fileSelectSource, setFileSelectSource] = useState(
     IS_WEB && showSourceSelector && name ? SOURCE_SELECT : SOURCE_UPLOAD
