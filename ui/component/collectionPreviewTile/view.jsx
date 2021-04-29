@@ -13,6 +13,7 @@ import ClaimPreview from 'component/claimPreview';
 import * as PAGES from 'constants/pages';
 import { COLLECTIONS_CONSTS } from 'lbry-redux';
 import Button from 'component/button';
+import ClaimPreviewTile from 'component/claimPreviewTile';
 import * as ICONS from 'constants/icons';
 
 type Props = {
@@ -69,6 +70,7 @@ function CollectionPreviewTile(props: Props) {
     pendingCollection,
     resolveCollectionItems,
   } = props;
+  console.log('props', props);
   // const shouldFetch = claim === undefined;
   // const canonicalUrl = claim && claim.canonical_url; uncomment after sdk resolve fix
 
@@ -161,68 +163,87 @@ function CollectionPreviewTile(props: Props) {
     );
   }
 
-  // may want to incorporate collection thumb as well as content previews
-  return (
-    <li
-      role="link"
-      onClick={handleClick}
-      className={classnames('card claim-preview--tile', {
-        'claim-preview__wrapper--channel': false,
-      })}
-    >
-      <NavLink {...navLinkProps}>
-        <ClaimPreview uri={firstUrl} key={firstUrl} type={'small'} />
-      </NavLink>
-      <NavLink {...navLinkProps}>
-        <h2 className="claim-tile__title">
-          <Button
-            button="link"
-            label={
-              <TruncatedText text={__('Collection: ') + (title || (claim && claim.name) || collectionName)} lines={2} />
-            }
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              history.push(`/$/${PAGES.COLLECTION}/${collectionId}`);
-            }}
-          />
-          <Button
-            icon={ICONS.REMOVE}
-            onClick={(e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              deleteCollection(collectionId);
-            }}
-          />
-        </h2>
-        <h2 className="claim-tile__title">{`${collectionItemUrls.length} Items`}</h2>
-        {pendingCollection && <h2 className="claim-tile__title">Pending</h2>}
-        {editedCollection && <h2 className="claim-tile__title">Edited</h2>}
-      </NavLink>
-      <div>
-        {claim && (
-          <div className="claim-tile__info">
-            {isChannel ? (
-              <div className="claim-tile__about--channel">
-                <SubscribeButton uri={uri} />
-              </div>
-            ) : (
-              <React.Fragment>
-                <UriIndicator uri={uri} link hideAnonymous>
-                  <ChannelThumbnail thumbnailPreview={channelThumbnail} />
-                </UriIndicator>
+  if (collectionItemUrls && collectionItemUrls.length > 0) {
+    return (
+      <li className="collection-preview">
+        <div className="collection-preview__info">
+          <div className="claim-grid__title">{collectionName}</div>
 
-                <div className="claim-tile__about">
-                  <UriIndicator uri={uri} link />
-                  <DateTime timeAgo uri={uri} />
-                </div>
-              </React.Fragment>
-            )}
+          <div className="section__actions--no-margin">
+            <Button label={__('View')} button="secondary" icon={ICONS.EYE} />
+            <Button label={__('Publish')} button="alt" icon={ICONS.PUBLISH} />
+            <Button label={__('Delete')} button="alt" icon={ICONS.DELETE} />
           </div>
-        )}
-      </div>
-    </li>
-  );
+        </div>
+        <div className="collection-preview__items">
+          {collectionItemUrls.slice(0, 3).map((uri) => (
+            <ClaimPreviewTile uri={uri} />
+          ))}
+        </div>
+      </li>
+    );
+  }
+  //   return (
+  //     <li
+  //       role="link"
+  //       onClick={handleClick}
+  //       className={classnames('card claim-preview--tile', {
+  //         'claim-preview__wrapper--channel': false,
+  //       })}
+  //     >
+  //       <NavLink {...navLinkProps}>
+  //         <ClaimPreview uri={firstUrl} key={firstUrl} type={'small'} />
+  //       </NavLink>
+  //       <NavLink {...navLinkProps}>
+  //         <h2 className="claim-tile__title">
+  //           <Button
+  //             button="link"
+  //             label={
+  //               <TruncatedText text={__('Collection: ') + (title || (claim && claim.name) || collectionName)} lines={2} />
+  //             }
+  //             onClick={(e) => {
+  //               e.preventDefault();
+  //               e.stopPropagation();
+  //               history.push(`/$/${PAGES.COLLECTION}/${collectionId}`);
+  //             }}
+  //           />
+  //           <Button
+  //             icon={ICONS.REMOVE}
+  //             onClick={(e) => {
+  //               e.preventDefault();
+  //               e.stopPropagation();
+  //               deleteCollection(collectionId);
+  //             }}
+  //           />
+  //         </h2>
+  //         <h2 className="claim-tile__title">{`${collectionItemUrls.length} Items`}</h2>
+  //         {pendingCollection && <h2 className="claim-tile__title">Pending</h2>}
+  //         {editedCollection && <h2 className="claim-tile__title">Edited</h2>}
+  //       </NavLink>
+  //       <div>
+  //         {claim && (
+  //           <div className="claim-tile__info">
+  //             {isChannel ? (
+  //               <div className="claim-tile__about--channel">
+  //                 <SubscribeButton uri={uri} />
+  //               </div>
+  //             ) : (
+  //               <React.Fragment>
+  //                 <UriIndicator uri={uri} link hideAnonymous>
+  //                   <ChannelThumbnail thumbnailPreview={channelThumbnail} />
+  //                 </UriIndicator>
+
+  //                 <div className="claim-tile__about">
+  //                   <UriIndicator uri={uri} link />
+  //                   <DateTime timeAgo uri={uri} />
+  //                 </div>
+  //               </React.Fragment>
+  //             )}
+  //           </div>
+  //         )}
+  //       </div>
+  //     </li>
+  //   );
 }
 
 export default withRouter(CollectionPreviewTile);

@@ -18,7 +18,7 @@ export default function CollectionAddButton(props: Props) {
   // one form for claim actions, one for thumb
   return (
     <Button
-      button={link ? 'link' : 'alt'}
+      button={link ? 'link' : 'secondary'}
       className={classnames({ 'button--file-action': fileAction })}
       icon={fileAction ? ICONS.ADD : ICONS.LIBRARY}
       iconSize={fileAction ? 22 : undefined}
