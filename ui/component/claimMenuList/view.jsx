@@ -50,6 +50,8 @@ function ClaimMenuList(props: Props) {
     return null;
   }
 
+  const isStream = claim.value_type === 'stream';
+
   function handleToggleMute() {
     doToggleMuteChannel(channelUri);
   }
@@ -82,6 +84,24 @@ function ClaimMenuList(props: Props) {
         <Icon size={20} icon={ICONS.MORE_VERTICAL} />
       </MenuButton>
       <MenuList className="menu__list">
+        {/* if stream, add to watch later, add to collection modal */}
+        {isStream && (
+          <>
+            <MenuItem className="comment__menu-option" onSelect={() => alert('watch later')}>
+              <div className="menu__link">
+                <Icon aria-hidden icon={ICONS.DISCOVER} />
+                {__('Watch Later')}
+              </div>
+            </MenuItem>
+          </>
+        )}
+        <MenuItem className="comment__menu-option" onSelect={() => alert('Add')}>
+          <div className="menu__link">
+            <Icon aria-hidden icon={ICONS.ADD} />
+            {__('Add to collection')}
+          </div>
+        </MenuItem>
+        <hr className="menu__separator" />
         {!claimIsMine && (
           <>
             <MenuItem className="comment__menu-option" onSelect={handleToggleBlock}>

@@ -1,6 +1,7 @@
 // @flow
 import * as ICONS from 'constants/icons';
 import React from 'react';
+import type { Node } from 'react';
 import ClaimList from 'component/claimList';
 import Page from 'component/page';
 import Button from 'component/button';
@@ -96,7 +97,7 @@ export default function CollectionPage(props: Props) {
   }
 
   const isMine = isMyClaim || isMyCollection; // isMyCollection
-  const advancedEdit = (user && user.experimental_ui) || false;
+  const advancedEdit = (user && user.experimental_ui) || true;
   const urlsReady =
     (collectionUrls && totalItems === undefined) || // ready if totalItems is missing
     (collectionUrls && totalItems && totalItems === collectionUrls.length); // ready if collectionUrls length = resolved totalItems
@@ -198,11 +199,13 @@ export default function CollectionPage(props: Props) {
     );
   }
 
-  const about = (
-    <div>
-      <h1>About</h1>
-    </div>
-  );
+  const tabs: { [string]: Node } = {
+    content: <Tab disabled={editing}>{__('Items')}</Tab>,
+    about: <Tab>{editing ? __('Editing Your Channel') : __('About --[tab title in Channel Page]--')}</Tab>,
+  };
+  if (advancedEdit) {
+    tabs['advanced'] = <Tab>{__('Advanced Item Edit')}</Tab>;
+  }
   // some kind of header here?
   // pass up, down, delete controls through claim list
   return (
@@ -272,11 +275,7 @@ export default function CollectionPage(props: Props) {
         <div className="channel-cover__gradient" />
       </header>
       <Tabs onChange={handleTabChange} index={tabIndex}>
-        <TabList className="tabs__list--channel-page">
-          <Tab disabled={editing}>{__('Items')}</Tab>
-          <Tab>{editing ? __('Editing Your Channel') : __('About --[tab title in Channel Page]--')}</Tab>
-          {advancedEdit && <Tab>{__('Advanced Item Edit')}</Tab>}
-        </TabList>
+        <TabList className="tabs__list--channel-page">{Object.values(tabs).map((t) => t)}</TabList>
         <TabPanels>
           <TabPanel>
             <ClaimList
@@ -286,7 +285,12 @@ export default function CollectionPage(props: Props) {
               collectionId={collectionId}
             />
           </TabPanel>
-          <TabPanel>{about}</TabPanel>
+          <TabPanel>
+            {' '}
+            <div>
+              <h1>About</h1>
+            </div>
+          </TabPanel>
           {advancedEdit && (
             <TabPanel>
               <Card
