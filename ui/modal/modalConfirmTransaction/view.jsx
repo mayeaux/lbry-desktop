@@ -5,23 +5,37 @@ import { Form } from 'component/common/form';
 import { Modal } from 'modal/modal';
 import Card from 'component/common/card';
 import LbcSymbol from 'component/common/lbc-symbol';
+import ChannelThumbnail from 'component/channelThumbnail';
+
+type TipParams = { amount: number, claim_id: string, channel_id?: string };
 
 type Props = {
-  address: string,
+  destination: string,
   amount: number,
   closeModal: () => void,
   sendToAddress: (string, number) => void,
+  sendTip: (TipParams, boolean) => void,
+  isClaim: boolean,
+  claim: StreamClaim,
+  claimTitle: string,
+  thumbnailUrl: string
 };
 
 class ModalConfirmTransaction extends React.PureComponent<Props> {
   onConfirmed() {
-    const { closeModal, sendToAddress, amount, address } = this.props;
-    sendToAddress(address, amount);
+    const { closeModal, sendToAddress, sendTip, amount, destination, isClaim, claim } = this.props;
+    if (isClaim) {
+      const claimId = claim && claim.claim_id;
+      const tipParams: TipParams = { amount: amount, claim_id: claimId };
+      sendTip(tipParams, false);
+    } else {
+      sendToAddress(destination, amount);
+    }
     closeModal();
   }
 
   render() {
-    const { amount, address, closeModal } = this.props;
+    const { amount, destination, closeModal, isClaim, claimTitle, thumbnailUrl } = this.props;
     const title = __('Confirm Transaction');
     return (
       <Modal isOpen contentLabel={title} type="card" onAborted={closeModal}>
@@ -34,7 +48,17 @@ class ModalConfirmTransaction extends React.PureComponent<Props> {
                   <div className="confirm__label">{__('Sending')}</div>
                   <div className="confirm__value">{<LbcSymbol postfix={amount} size={22} />}</div>
                   <div className="confirm__label">{__('To')}</div>
-                  <div className="confirm__value">{address}</div>
+                  <div className="confirm__value">{destination}</div>
+                  <div>
+                    {isClaim && 
+                      <ChannelThumbnail
+                        className="channel__thumbnail"
+                        uri={destination}
+                        allowGifs
+                        showDelayedMessage
+                      />}
+                    {isClaim && <h1 className="card__title">{claimTitle}</h1>}
+                  </div>
                 </div>
               </div>
             }

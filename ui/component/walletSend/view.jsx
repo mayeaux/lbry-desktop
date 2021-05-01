@@ -9,14 +9,15 @@ import Card from 'component/common/card';
 import I18nMessage from 'component/i18nMessage';
 import LbcSymbol from 'component/common/lbc-symbol';
 import WalletSpendableBalanceHelp from 'component/walletSpendableBalanceHelp';
+import { regexInvalidURI } from 'lbry-redux';
 
 type DraftTransaction = {
-  address: string,
+  destination: string,
   amount: ?number, // So we can use a placeholder in the input
 };
 
 type Props = {
-  openModal: (id: string, { address: string, amount: number }) => void,
+  openModal: (id: string, { destination: string, amount: number }) => void,
   balance: number,
 };
 
@@ -29,9 +30,12 @@ class WalletSend extends React.PureComponent<Props> {
 
   handleSubmit(values: DraftTransaction) {
     const { openModal } = this.props;
-    const { address, amount } = values;
-    if (amount && address) {
-      const modalProps = { address, amount };
+    const { destination, amount } = values;
+
+    if (amount && destination) {
+      const isClaim = false;
+      const modalProps = { destination, amount, isClaim };
+      if (regexInvalidURI.test(destination)) modalProps.isClaim = true;
       openModal(MODALS.CONFIRM_TRANSACTION, modalProps);
     }
   }
@@ -75,13 +79,13 @@ class WalletSend extends React.PureComponent<Props> {
 
                   <FormField
                     type="text"
-                    name="address"
-                    placeholder="bbFxRyXXXXXXXXXXXZD8nE7XTLUxYnddTs"
+                    name="destination"
+                    placeholder="bbFxRyXXX...lbry://url...@user..."
                     className="form-field--address"
-                    label={__('Recipient address')}
+                    label={__('Recipient destination')}
                     onChange={handleChange}
                     onBlur={handleBlur}
-                    value={values.address}
+                    value={values.destination}
                   />
                 </fieldset-group>
                 <div className="card__actions">
@@ -90,7 +94,7 @@ class WalletSend extends React.PureComponent<Props> {
                     type="submit"
                     label={__('Send')}
                     disabled={
-                      !values.address ||
+                      !values.destination ||
                       !!Object.keys(errors).length ||
                       !(parseFloat(values.amount) > 0.0) ||
                       parseFloat(values.amount) === balance
@@ -98,7 +102,7 @@ class WalletSend extends React.PureComponent<Props> {
                   />
                   {!!Object.keys(errors).length || (
                     <span className="error__text">
-                      {(!!values.address && touched.address && errors.address) ||
+                      {(!!values.destination && touched.destination && errors.destination) ||
                         (!!values.amount && touched.amount && errors.amount) ||
                         (parseFloat(values.amount) === balance &&
                           __('Decrease amount to account for transaction fee')) ||
