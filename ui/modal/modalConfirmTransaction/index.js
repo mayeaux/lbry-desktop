@@ -3,7 +3,6 @@ import {
   doSendDraftTransaction,
   makeSelectTitleForUri,
   makeSelectClaimForUri,
-  makeSelectThumbnailForUri,
   doSendTip
 } from 'lbry-redux';
 import { doHideModal } from 'redux/actions/app';
@@ -11,8 +10,7 @@ import ModalConfirmTransaction from './view';
 
 const select = (state, props) => ({
   claim: makeSelectClaimForUri(props.destination)(state),
-  claimTitle: makeSelectTitleForUri(props.destination)(state),
-  thumbnailUrl: makeSelectThumbnailForUri(props.destination)(state),
+  claimTitle: makeSelectTitleForUri(props.destination)(state)
 });
 
 const perform = dispatch => ({

@@ -17,8 +17,7 @@ type Props = {
   sendTip: (TipParams, boolean) => void,
   isClaim: boolean,
   claim: StreamClaim,
-  claimTitle: string,
-  thumbnailUrl: string
+  claimTitle: string
 };
 
 class ModalConfirmTransaction extends React.PureComponent<Props> {
@@ -35,7 +34,8 @@ class ModalConfirmTransaction extends React.PureComponent<Props> {
   }
 
   render() {
-    const { amount, destination, closeModal, isClaim, claimTitle, thumbnailUrl } = this.props;
+    const { amount, destination, closeModal, isClaim, claim, claimTitle } = this.props;
+    const claimUrl = claim && claim.canonical_url;
     const title = __('Confirm Transaction');
     return (
       <Modal isOpen contentLabel={title} type="card" onAborted={closeModal}>
@@ -48,7 +48,7 @@ class ModalConfirmTransaction extends React.PureComponent<Props> {
                   <div className="confirm__label">{__('Sending')}</div>
                   <div className="confirm__value">{<LbcSymbol postfix={amount} size={22} />}</div>
                   <div className="confirm__label">{__('To')}</div>
-                  <div className="confirm__value">{destination}</div>
+                  <div className="confirm__value">{isClaim ? claimUrl : destination}</div>
                   <div>
                     {isClaim && 
                       <ChannelThumbnail
