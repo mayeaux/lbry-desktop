@@ -15,6 +15,7 @@ type Props = {
   uri: string,
   claim: StreamClaim,
   metadata: StreamMetadata,
+  livestream?: boolean,
   user: ?any,
   tags: any,
   pendingAmount: number,
@@ -23,7 +24,7 @@ type Props = {
 };
 
 function FileDescription(props: Props) {
-  const { uri, claim, metadata, pendingAmount, doOpenModal, claimIsMine } = props;
+  const { uri, claim, metadata, pendingAmount, livestream = false, doOpenModal, claimIsMine } = props;
   const [expanded, setExpanded] = React.useState(false);
   const [showCreditDetails, setShowCreditDetails] = React.useState(false);
   const amount = parseFloat(claim.amount) + parseFloat(pendingAmount || claim.meta.support_amount);
@@ -40,9 +41,9 @@ function FileDescription(props: Props) {
     <div>
       <div
         className={classnames({
-          'media__info-text--contracted': !expanded,
-          'media__info-text--expanded': expanded,
-          'media__info-text--fade': !expanded,
+          'media__info-text--contracted': !expanded && !livestream,
+          'media__info-text--expanded': expanded || livestream,
+          'media__info-text--fade': !expanded && !livestream,
         })}
       >
         {description && <MarkdownPreview className="markdown-preview--description" content={description} simpleLinks />}
