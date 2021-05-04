@@ -9,7 +9,9 @@ import Card from 'component/common/card';
 import I18nMessage from 'component/i18nMessage';
 import LbcSymbol from 'component/common/lbc-symbol';
 import WalletSpendableBalanceHelp from 'component/walletSpendableBalanceHelp';
-import { regexInvalidURI } from 'lbry-redux';
+import classnames from 'classnames';
+import ChannelSelector from 'component/channelSelector';
+import ClaimPreview from 'component/claimPreview';
 
 type DraftTransaction = {
   destination: string,
@@ -19,6 +21,10 @@ type DraftTransaction = {
 type Props = {
   openModal: (id: string, { destination: string, amount: number }) => void,
   balance: number,
+  isAddress: boolean,
+  setIsAddress: () => boolean,
+  contentUri: string,
+  setEnteredContentUri: () => string
 };
 
 class WalletSend extends React.PureComponent<Props> {
@@ -29,27 +35,43 @@ class WalletSend extends React.PureComponent<Props> {
   }
 
   handleSubmit(values: DraftTransaction) {
-    const { openModal } = this.props;
+    const { openModal, isAddress } = this.props;
     const { destination, amount } = values;
 
     if (amount && destination) {
       const isClaim = false;
       const modalProps = { destination, amount, isClaim };
-      if (regexInvalidURI.test(destination)) modalProps.isClaim = true;
+      if (!isAddress) modalProps.isClaim = true;
       openModal(MODALS.CONFIRM_TRANSACTION, modalProps);
     }
   }
 
   render() {
-    const { balance } = this.props;
+    const { balance, isAddress, setIsAddress, contentUri, setEnteredContentUri } = this.props;
 
     return (
       <Card
         title={__('Send Credits')}
         subtitle={
+        <div className="section">
           <I18nMessage tokens={{ lbc: <LbcSymbol /> }}>
             Send LBRY Credits to your friends or favorite creators.
           </I18nMessage>
+          <Button
+            key="Address"
+            label={__('Address')}
+            button="alt"
+            onClick={() => setIsAddress(true)}
+            className={classnames('button-toggle', { 'button-toggle--active': isAddress })}
+          />
+          <Button
+            key="Search"
+            label={__('Search')}
+            button="alt"
+            onClick={() => setIsAddress(false)}
+            className={classnames('button-toggle', { 'button-toggle--active': !isAddress })}
+          />
+        </div>
         }
         actions={
           <Formik
@@ -60,58 +82,75 @@ class WalletSend extends React.PureComponent<Props> {
             onSubmit={this.handleSubmit}
             validate={validateSendTx}
             render={({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
-              <Form onSubmit={handleSubmit}>
-                <fieldset-group class="fieldset-group--smushed">
-                  <FormField
-                    autoFocus
-                    type="number"
-                    name="amount"
-                    label={__('Amount')}
-                    className="form-field--price-amount"
-                    affixClass="form-field--fix-no-height"
-                    min="0"
-                    step="any"
-                    placeholder="12.34"
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.amount}
-                  />
+              <div>
+                {!isAddress && <ChannelSelector />}
 
-                  <FormField
-                    type="text"
-                    name="destination"
-                    placeholder="bbFxRyXXX...lbry://url...@user..."
-                    className="form-field--address"
-                    label={__('Recipient destination')}
-                    onChange={handleChange}
-                    onBlur={handleBlur}
-                    value={values.destination}
-                  />
-                </fieldset-group>
-                <div className="card__actions">
-                  <Button
-                    button="primary"
-                    type="submit"
-                    label={__('Send')}
-                    disabled={
-                      !values.destination ||
-                      !!Object.keys(errors).length ||
-                      !(parseFloat(values.amount) > 0.0) ||
-                      parseFloat(values.amount) === balance
-                    }
-                  />
-                  {!!Object.keys(errors).length || (
-                    <span className="error__text">
-                      {(!!values.destination && touched.destination && errors.destination) ||
-                        (!!values.amount && touched.amount && errors.amount) ||
-                        (parseFloat(values.amount) === balance &&
-                          __('Decrease amount to account for transaction fee')) ||
-                        (parseFloat(values.amount) > balance && __('Not enough Credits'))}
-                    </span>
-                  )}
-                </div>
-                <WalletSpendableBalanceHelp />
-              </Form>
+                <Form onSubmit={handleSubmit}>
+                  <fieldset-group class="fieldset-group--smushed">
+                    <FormField
+                      autoFocus
+                      type="number"
+                      name="amount"
+                      label={__('Amount')}
+                      className="form-field--price-amount"
+                      affixClass="form-field--fix-no-height"
+                      min="0"
+                      step="any"
+                      placeholder="12.34"
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.amount}
+                    />
+                    {isAddress ? <FormField
+                      type="text"
+                      name="destination"
+                      placeholder="bbFxRyXXXXXXXXXXXZD8nE7XTLUxYnddTs"
+                      className="form-field--address"
+                      label={__('Recipient Address')}
+                      onChange={handleChange}
+                      onBlur={handleBlur}
+                      value={values.destination}
+                    /> : <FormField
+                      type="text"
+                      name="destination"
+                      placeholder="Enter a @name or lbry:// URL"
+                      className="form-field--address"
+                      label={__('Recipient Name/URL')}
+                      onChange={event => setEnteredContentUri(event.target.value)}
+                      onBlur={handleBlur}
+                      value={values.destination}
+                    />}
+                  </fieldset-group>
+
+                  {!isAddress && <fieldset-section>
+                    <ClaimPreview key={contentUri} uri={contentUri} actions={''} type={'large'} showNullPlaceholder />
+                  </fieldset-section>}
+
+                  <div className="card__actions">
+                    <Button
+                      button="primary"
+                      type="submit"
+                      label={__('Send')}
+                      disabled={
+                        !values.destination ||
+                        !!Object.keys(errors).length ||
+                        !(parseFloat(values.amount) > 0.0) ||
+                        parseFloat(values.amount) === balance
+                      }
+                    />
+                    {!!Object.keys(errors).length || (
+                      <span className="error__text">
+                        {(!!values.destination && touched.destination && errors.destination) ||
+                          (!!values.amount && touched.amount && errors.amount) ||
+                          (parseFloat(values.amount) === balance &&
+                            __('Decrease amount to account for transaction fee')) ||
+                          (parseFloat(values.amount) > balance && __('Not enough Credits'))}
+                      </span>
+                    )}
+                  </div>
+                  <WalletSpendableBalanceHelp />
+                </Form>
+              </div>
             )}
           />
         }
