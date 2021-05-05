@@ -86,6 +86,22 @@ class WalletSend extends React.PureComponent<Props> {
                 {!isAddress && <ChannelSelector />}
 
                 <Form onSubmit={handleSubmit}>
+
+                  {!isAddress && <FormField
+                    type="text"
+                    name="search"
+                    placeholder="Search for a content, @name or lbry:// URL"
+                    className="form-field--address"
+                    label={__('Recipient search')}
+                    onChange={event => setEnteredContentUri(event.target.value)}
+                    onBlur={handleBlur}
+                    value={values.search}
+                  />}
+
+                  {!isAddress && <fieldset-section>
+                    <ClaimPreview key={contentUri} uri={contentUri} actions={''} type={'small'} showNullPlaceholder />
+                  </fieldset-section>}
+
                   <fieldset-group class="fieldset-group--smushed">
                     <FormField
                       autoFocus
@@ -113,18 +129,14 @@ class WalletSend extends React.PureComponent<Props> {
                     /> : <FormField
                       type="text"
                       name="destination"
-                      placeholder="Enter a @name or lbry:// URL"
+                      placeholder="content, @name, lbry://"
                       className="form-field--address"
                       label={__('Recipient Name/URL')}
-                      onChange={event => setEnteredContentUri(event.target.value)}
+                      onChange={handleChange}
                       onBlur={handleBlur}
                       value={values.destination}
                     />}
                   </fieldset-group>
-
-                  {!isAddress && <fieldset-section>
-                    <ClaimPreview key={contentUri} uri={contentUri} actions={''} type={'small'} showNullPlaceholder />
-                  </fieldset-section>}
 
                   <div className="card__actions">
                     <Button
