@@ -7,10 +7,13 @@ import {
 } from 'lbry-redux';
 import { doHideModal } from 'redux/actions/app';
 import ModalConfirmTransaction from './view';
+import { selectActiveChannelClaim, selectIncognito } from 'redux/selectors/app';
 
 const select = (state, props) => ({
   claim: makeSelectClaimForUri(props.destination)(state),
-  claimTitle: makeSelectTitleForUri(props.destination)(state)
+  claimTitle: makeSelectTitleForUri(props.destination)(state),
+  activeChannelClaim: selectActiveChannelClaim(state),
+  incognito: selectIncognito(state)
 });
 
 const perform = dispatch => ({

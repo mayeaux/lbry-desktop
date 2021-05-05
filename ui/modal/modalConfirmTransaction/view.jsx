@@ -17,7 +17,9 @@ type Props = {
   sendTip: (TipParams, boolean) => void,
   isClaim: boolean,
   claim: StreamClaim,
-  claimTitle: string
+  claimTitle: string,
+  activeChannelClaim: ?ChannelClaim,
+  incognito: boolean
 };
 
 class ModalConfirmTransaction extends React.PureComponent<Props> {
@@ -34,7 +36,8 @@ class ModalConfirmTransaction extends React.PureComponent<Props> {
   }
 
   render() {
-    const { amount, destination, closeModal, isClaim, claim, claimTitle } = this.props;
+    const { amount, destination, closeModal, isClaim, claim, claimTitle, incognito, activeChannelClaim } = this.props;
+    const activeChannelUrl = activeChannelClaim && activeChannelClaim.canonical_url;
     const claimUrl = claim && claim.canonical_url;
     const title = __('Confirm Transaction');
     return (
@@ -47,6 +50,15 @@ class ModalConfirmTransaction extends React.PureComponent<Props> {
                 <div className="section">
                   <div className="confirm__label">{__('Sending')}</div>
                   <div className="confirm__value">{<LbcSymbol postfix={amount} size={22} />}</div>
+                  {isClaim && <div className="confirm__label">{__('From')}</div>}
+                  {isClaim && <div className="confirm__value">{incognito ? 'Anonymous' : activeChannelUrl}</div>}
+                    {(!incognito && isClaim) && 
+                      <ChannelThumbnail
+                        className="channel__thumbnail"
+                        uri={activeChannelUrl}
+                        allowGifs
+                        showDelayedMessage
+                      />}
                   <div className="confirm__label">{__('To')}</div>
                   <div className="confirm__value">{isClaim ? claimUrl : destination}</div>
                   <div>
