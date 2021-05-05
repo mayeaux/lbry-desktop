@@ -123,7 +123,7 @@ class WalletSend extends React.PureComponent<Props> {
                   </fieldset-group>
 
                   {!isAddress && <fieldset-section>
-                    <ClaimPreview key={contentUri} uri={contentUri} actions={''} type={'large'} showNullPlaceholder />
+                    <ClaimPreview key={contentUri} uri={contentUri} actions={''} type={'small'} showNullPlaceholder />
                   </fieldset-section>}
 
                   <div className="card__actions">
