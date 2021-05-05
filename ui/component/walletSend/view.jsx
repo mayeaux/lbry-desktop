@@ -5,6 +5,7 @@ import Button from 'component/button';
 import { Form, FormField } from 'component/common/form';
 import { Formik } from 'formik';
 import { validateSendTx } from 'util/form-validation';
+import { validateSendTxToUri } from 'util/form-validation-uri';
 import Card from 'component/common/card';
 import I18nMessage from 'component/i18nMessage';
 import LbcSymbol from 'component/common/lbc-symbol';
@@ -76,11 +77,11 @@ class WalletSend extends React.PureComponent<Props> {
         actions={
           <Formik
             initialValues={{
-              address: '',
+              destination: '',
               amount: '',
             }}
             onSubmit={this.handleSubmit}
-            validate={validateSendTx}
+            validate={isAddress ? validateSendTx : validateSendTxToUri}
             render={({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
               <div>
                 {!isAddress && <ChannelSelector />}
