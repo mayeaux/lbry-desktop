@@ -54,26 +54,9 @@ class WalletSend extends React.PureComponent<Props> {
       <Card
         title={__('Send Credits')}
         subtitle={
-        <div className="section">
-          <I18nMessage tokens={{ lbc: <LbcSymbol /> }}>
-            Send LBRY Credits to your friends or favorite creators.
-          </I18nMessage>
-          <Button
-            key="Address"
-            label={__('Address')}
-            button="alt"
-            onClick={() => setIsAddress(true)}
-            className={classnames('button-toggle', { 'button-toggle--active': isAddress })}
-          />
-          <Button
-            key="Search"
-            label={__('Search')}
-            button="alt"
-            onClick={() => setIsAddress(false)}
-            className={classnames('button-toggle', { 'button-toggle--active': !isAddress })}
-          />
-        </div>
-        }
+        <I18nMessage tokens={{ lbc: <LbcSymbol /> }}>
+          Send LBRY Credits to your friends or favorite creators.
+        </I18nMessage>}
         actions={
           <Formik
             initialValues={{
@@ -84,85 +67,104 @@ class WalletSend extends React.PureComponent<Props> {
             validate={isAddress ? validateSendTx : validateSendTxToUri}
             render={({ values, errors, touched, handleChange, handleBlur, handleSubmit }) => (
               <div>
-                {!isAddress && <ChannelSelector />}
+                <div className="section">
+                  <Button
+                    key="Address"
+                    label={__('Address')}
+                    button="alt"
+                    onClick={() => setIsAddress(true)}
+                    className={classnames('button-toggle', { 'button-toggle--active': isAddress })}
+                  />
+                  <Button
+                    key="Search"
+                    label={__('Search')}
+                    button="alt"
+                    onClick={() => setIsAddress(false)}
+                    className={classnames('button-toggle', { 'button-toggle--active': !isAddress })}
+                  />
+                </div>
+                
+                <div className="section">
+                  {!isAddress && <ChannelSelector />}
 
-                <Form onSubmit={handleSubmit}>
+                  <Form onSubmit={handleSubmit}>
 
-                  {!isAddress && <FormField
-                    type="text"
-                    name="search"
-                    placeholder="Search for a content, @name or lbry:// URL"
-                    className="form-field--address"
-                    label={__('Recipient search')}
-                    onChange={event => setEnteredContentUri(event.target.value)}
-                    onBlur={handleBlur}
-                    value={values.search}
-                  />}
-
-                  {!isAddress && <fieldset-section>
-                    <ClaimPreview key={contentUri} uri={contentUri} actions={''} type={'small'} showNullPlaceholder />
-                  </fieldset-section>}
-
-                  <fieldset-group class="fieldset-group--smushed">
-                    <FormField
-                      autoFocus
-                      type="number"
-                      name="amount"
-                      label={__('Amount')}
-                      className="form-field--price-amount"
-                      affixClass="form-field--fix-no-height"
-                      min="0"
-                      step="any"
-                      placeholder="12.34"
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.amount}
-                    />
-                    {isAddress ? <FormField
+                    {!isAddress && <FormField
                       type="text"
-                      name="destination"
-                      placeholder="bbFxRyXXXXXXXXXXXZD8nE7XTLUxYnddTs"
+                      name="search"
+                      placeholder="Search for a content, @name or lbry:// URL"
                       className="form-field--address"
-                      label={__('Recipient Address')}
-                      onChange={handleChange}
+                      label={__('Recipient search')}
+                      onChange={event => setEnteredContentUri(event.target.value)}
                       onBlur={handleBlur}
-                      value={values.destination}
-                    /> : <FormField
-                      type="text"
-                      name="destination"
-                      placeholder="content, @name, lbry://"
-                      className="form-field--address"
-                      label={__('Recipient Name/URL')}
-                      onChange={handleChange}
-                      onBlur={handleBlur}
-                      value={values.destination}
+                      value={values.search}
                     />}
-                  </fieldset-group>
 
-                  <div className="card__actions">
-                    <Button
-                      button="primary"
-                      type="submit"
-                      label={__('Send')}
-                      disabled={
-                        !values.destination ||
-                        !!Object.keys(errors).length ||
-                        !(parseFloat(values.amount) > 0.0) ||
-                        parseFloat(values.amount) === balance
-                      }
-                    />
-                    {!!Object.keys(errors).length || (
-                      <span className="error__text">
-                        {(!!values.destination && touched.destination && errors.destination) ||
-                          (!!values.amount && touched.amount && errors.amount) ||
-                          (parseFloat(values.amount) === balance &&
-                            __('Decrease amount to account for transaction fee')) ||
-                          (parseFloat(values.amount) > balance && __('Not enough Credits'))}
-                      </span>
-                    )}
-                  </div>
-                  <WalletSpendableBalanceHelp />
-                </Form>
+                    {!isAddress && <fieldset-section>
+                      <ClaimPreview key={contentUri} uri={contentUri} actions={''} type={'small'} showNullPlaceholder />
+                    </fieldset-section>}
+
+                    <fieldset-group class="fieldset-group--smushed">
+                      <FormField
+                        autoFocus
+                        type="number"
+                        name="amount"
+                        label={__('Amount')}
+                        className="form-field--price-amount"
+                        affixClass="form-field--fix-no-height"
+                        min="0"
+                        step="any"
+                        placeholder="12.34"
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.amount}
+                      />
+                      {isAddress ? <FormField
+                        type="text"
+                        name="destination"
+                        placeholder="bbFxRyXXXXXXXXXXXZD8nE7XTLUxYnddTs"
+                        className="form-field--address"
+                        label={__('Recipient Address')}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.destination}
+                      /> : <FormField
+                        type="text"
+                        name="destination"
+                        placeholder="content, @name, lbry://"
+                        className="form-field--address"
+                        label={__('Recipient Name/URL')}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                        value={values.destination}
+                      />}
+                    </fieldset-group>
+
+                    <div className="card__actions">
+                      <Button
+                        button="primary"
+                        type="submit"
+                        label={__('Send')}
+                        disabled={
+                          !values.destination ||
+                          !!Object.keys(errors).length ||
+                          !(parseFloat(values.amount) > 0.0) ||
+                          parseFloat(values.amount) === balance
+                        }
+                      />
+                      {!!Object.keys(errors).length || (
+                        <span className="error__text">
+                          {(!!values.destination && touched.destination && errors.destination) ||
+                            (!!values.amount && touched.amount && errors.amount) ||
+                            (parseFloat(values.amount) === balance &&
+                              __('Decrease amount to account for transaction fee')) ||
+                            (parseFloat(values.amount) > balance && __('Not enough Credits'))}
+                        </span>
+                      )}
+                    </div>
+                    <WalletSpendableBalanceHelp />
+                  </Form>
+                </div>
               </div>
             )}
           />
