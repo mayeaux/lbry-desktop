@@ -92,7 +92,7 @@ class WalletSend extends React.PureComponent<Props> {
                     {!isAddress && <FormField
                       type="text"
                       name="search"
-                      placeholder="Search for a content, @name or lbry:// URL"
+                      placeholder="Search for content, @username or lbry://url"
                       className="form-field--address"
                       label={__('Recipient search')}
                       onChange={event => setEnteredContentUri(event.target.value)}
@@ -131,7 +131,7 @@ class WalletSend extends React.PureComponent<Props> {
                       /> : <FormField
                         type="text"
                         name="destination"
-                        placeholder="content, @name, lbry://"
+                        placeholder="@name, @name/content, lbry://url"
                         className="form-field--address"
                         label={__('Recipient Name/URL')}
                         onChange={handleChange}
