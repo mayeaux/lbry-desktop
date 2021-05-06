@@ -5,7 +5,7 @@ import { Form } from 'component/common/form';
 import { Modal } from 'modal/modal';
 import Card from 'component/common/card';
 import LbcSymbol from 'component/common/lbc-symbol';
-import ChannelThumbnail from 'component/channelThumbnail';
+import ClaimPreview from 'component/claimPreview';
 
 type TipParams = { amount: number, claim_id: string, channel_id?: string };
 
@@ -36,9 +36,8 @@ class ModalConfirmTransaction extends React.PureComponent<Props> {
   }
 
   render() {
-    const { amount, destination, closeModal, isClaim, claim, claimTitle, incognito, activeChannelClaim } = this.props;
+    const { amount, destination, closeModal, isClaim, incognito, activeChannelClaim } = this.props;
     const activeChannelUrl = activeChannelClaim && activeChannelClaim.canonical_url;
-    const claimUrl = claim && claim.canonical_url;
     const title = __('Confirm Transaction');
     return (
       <Modal isOpen contentLabel={title} type="card" onAborted={closeModal}>
@@ -48,29 +47,31 @@ class ModalConfirmTransaction extends React.PureComponent<Props> {
             body={
               <div className="section section--padded card--inline confirm__wrapper">
                 <div className="section">
+
                   <div className="confirm__label">{__('Sending')}</div>
                   <div className="confirm__value">{<LbcSymbol postfix={amount} size={22} />}</div>
+
                   {isClaim && <div className="confirm__label">{__('From')}</div>}
-                  {isClaim && <div className="confirm__value">{incognito ? 'Anonymous' : activeChannelUrl}</div>}
-                    {(!incognito && isClaim) && 
-                      <ChannelThumbnail
-                        className="channel__thumbnail"
-                        uri={activeChannelUrl}
-                        allowGifs
-                        showDelayedMessage
-                      />}
+                  {isClaim && <div className="confirm__value">
+                    {incognito ? 'Anonymous' :
+                    <ClaimPreview
+                      key={activeChannelUrl}
+                      uri={activeChannelUrl}
+                      actions={''}
+                      type={'small'}
+                    />}
+                  </div>}
+
                   <div className="confirm__label">{__('To')}</div>
-                  <div className="confirm__value">{isClaim ? claimUrl : destination}</div>
-                  <div>
-                    {isClaim && 
-                      <ChannelThumbnail
-                        className="channel__thumbnail"
-                        uri={destination}
-                        allowGifs
-                        showDelayedMessage
-                      />}
-                    {isClaim && <h1 className="card__title">{claimTitle}</h1>}
+                  <div className="confirm__value">{isClaim ?
+                    <ClaimPreview
+                      key={destination}
+                      uri={destination}
+                      actions={''}
+                      type={'small'}
+                    /> : destination}
                   </div>
+
                 </div>
               </div>
             }
