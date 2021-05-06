@@ -1,7 +1,6 @@
 import { connect } from 'react-redux';
 import {
   doSendDraftTransaction,
-  makeSelectTitleForUri,
   makeSelectClaimForUri,
   doSendTip
 } from 'lbry-redux';
@@ -11,7 +10,6 @@ import { selectActiveChannelClaim, selectIncognito } from 'redux/selectors/app';
 
 const select = (state, props) => ({
   claim: makeSelectClaimForUri(props.destination)(state),
-  claimTitle: makeSelectTitleForUri(props.destination)(state),
   activeChannelClaim: selectActiveChannelClaim(state),
   incognito: selectIncognito(state)
 });

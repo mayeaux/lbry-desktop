@@ -119,25 +119,16 @@ class WalletSend extends React.PureComponent<Props> {
                         onBlur={handleBlur}
                         value={values.amount}
                       />
-                      {isAddress ? <FormField
+                      <FormField
                         type="text"
                         name="destination"
-                        placeholder="bbFxRyXXXXXXXXXXXZD8nE7XTLUxYnddTs"
+                        placeholder={isAddress ? "bbFxRyXXXXXXXXXXXZD8nE7XTLUxYnddTs" : "@name, @name/content, lbry://url"}
                         className="form-field--address"
-                        label={__('Recipient Address')}
+                        label={isAddress ? __('Recipient Address') : __('Recipient Name/URL')}
                         onChange={handleChange}
                         onBlur={handleBlur}
                         value={values.destination}
-                      /> : <FormField
-                        type="text"
-                        name="destination"
-                        placeholder="@name, @name/content, lbry://url"
-                        className="form-field--address"
-                        label={__('Recipient Name/URL')}
-                        onChange={handleChange}
-                        onBlur={handleBlur}
-                        value={values.destination}
-                      />}
+                      />
                     </fieldset-group>
 
                     <div className="card__actions">

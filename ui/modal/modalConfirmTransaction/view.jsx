@@ -17,7 +17,6 @@ type Props = {
   sendTip: (TipParams, boolean) => void,
   isClaim: boolean,
   claim: StreamClaim,
-  claimTitle: string,
   activeChannelClaim: ?ChannelClaim,
   incognito: boolean
 };
