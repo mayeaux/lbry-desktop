@@ -73,7 +73,7 @@ type Props = {
   hideMenu?: boolean,
   isLivestream?: boolean,
   collectionId?: string,
-  collectionIndex: ?number,
+  collectionIndex: number,
   editCollection: (string, CollectionUpdateParams) => void,
   isCollectionMine: boolean,
   collectionUris: Array<Collection>,
@@ -330,7 +330,7 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                 {!pending && (
                   <>
                     {renderActions && claim && renderActions(claim)}
-                    {isMyCollection && collectionId && collectionIndex && (
+                    {Boolean(isMyCollection && collectionId) && (
                       <>
                         <div className="collection-edit-buttons">
                           <div className="collection-edit-group">

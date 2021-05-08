@@ -1,6 +1,6 @@
 // @flow
 import * as React from 'react';
-import FileAuthor from 'component/fileAuthor';
+import ClaimAuthor from 'component/claimAuthor';
 import FileTitle from 'component/fileTitle';
 import FileActions from 'component/fileActions';
 import FileRenderInitiator from 'component/fileRenderInitiator';
@@ -35,7 +35,7 @@ function PostViewer(props: Props) {
         <FileViewCount uri={uri} />
       </div>
 
-      <FileAuthor uri={uri} />
+      <ClaimAuthor uri={uri} />
 
       <FileRenderInitiator uri={uri} />
       <FileRenderInline uri={uri} />

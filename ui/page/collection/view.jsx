@@ -9,8 +9,11 @@ import * as PAGES from 'constants/pages';
 import ShareButton from 'component/shareButton';
 import { useHistory } from 'react-router-dom';
 import CollectionEdit from 'component/collectionEdit';
-
-import Icon from 'component/common/icon';
+import Card from 'component/common/card';
+import FileActions from 'component/fileActions';
+import classnames from 'classnames';
+import ClaimAuthor from 'component/claimAuthor';
+import FileDescription from 'component/fileDescription';
 
 export const PAGE_VIEW_QUERY = 'view';
 export const PUBLISH_PAGE = 'publish';
@@ -64,6 +67,7 @@ export default function CollectionPage(props: Props) {
   } = useHistory();
 
   const [didTryResolve, setDidTryResolve] = React.useState(false);
+  const [showInfo, setShowInfo] = React.useState(false);
   // const isClaim = Boolean(claim); do I need this for anything related to unpublished collection ids?
 
   const { name, totalItems } = collection || {};
@@ -115,6 +119,13 @@ export default function CollectionPage(props: Props) {
                 iconSize={18}
                 disabled={claimIsPending}
               />
+              <Button
+                className={classnames('button-toggle', {
+                  'button-toggle--active': showInfo,
+                })}
+                label={__('Info')}
+                onClick={() => setShowInfo(!showInfo)}
+              />
             </>
           )}
         </>
@@ -146,6 +157,21 @@ export default function CollectionPage(props: Props) {
         </>
       )}
     </div>
+  );
+
+  const info = (
+    <Card
+      title={collection && collection.name}
+      body={<FileActions uri={uri} />}
+      actions={
+        showInfo && (
+          <div className="section">
+            <ClaimAuthor uri={uri} />
+            <FileDescription uri={uri} />
+          </div>
+        )
+      }
+    />
   );
 
   if (!collection && (isResolvingCollection || !didTryResolve)) {
@@ -188,13 +214,11 @@ export default function CollectionPage(props: Props) {
   // pass up, down, delete controls through claim list
   return (
     <Page>
-      <label className="claim-list__header-label">
-        <span>
-          <Icon icon={collectionId === COLS.WATCH_LATER_ID ? ICONS.TIME : ICONS.STACK} size={10} />
-          {collection && collection.name}
-        </span>
-      </label>
-      <ClaimList header={buttons} uris={collectionUrls} collectionId={collectionId} />
+      <div className={classnames('section card-stack')}>
+        {buttons}
+        {info}
+        <ClaimList uris={collectionUrls} collectionId={collectionId} />
+      </div>
     </Page>
   );
 }
