@@ -6,10 +6,8 @@ import Button from 'component/button';
 import Page from 'component/page';
 import Spinner from 'component/spinner';
 import DownloadList from 'page/fileListDownloaded';
-import Yrbl from 'component/yrbl';
 import { useHistory } from 'react-router';
 import CollectionsListMine from 'component/collectionsListMine';
-import ClaimCollectionAddButton from 'component/claimCollectionAddButton';
 import usePersistedState from 'effects/use-persisted-state';
 import { Form, FormField } from 'component/common/form';
 import Icon from 'component/common/icon';
@@ -82,7 +80,7 @@ function LibraryPage(props: Props) {
                 onClick={() => setViewMode(VIEW_PURCHASES)}
               />
               <Button
-                icon={ICONS.PURCHASED}
+                icon={ICONS.STACK}
                 button="alt"
                 label={__('Collections')}
                 className={classnames(`button-toggle`, {
@@ -93,9 +91,7 @@ function LibraryPage(props: Props) {
               {loading && <Spinner type="small" />}
             </div>
 
-            {viewMode === VIEW_COLLECTIONS ? (
-              <ClaimCollectionAddButton />
-            ) : (
+            {viewMode !== VIEW_COLLECTIONS && (
               <Form onSubmit={() => {}} className="wunderbar--inline">
                 <Icon icon={ICONS.SEARCH} />
                 <FormField

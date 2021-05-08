@@ -17,7 +17,7 @@ const select = (state, props) => ({
 });
 
 const perform = (dispatch) => ({
-  addCollection: (name) => dispatch(doLocalCollectionCreate(name)),
+  addCollection: (name, type) => dispatch(doLocalCollectionCreate(name, null, type)),
 });
 
 export default withRouter(connect(select, perform)(ClaimCollectionAdd));

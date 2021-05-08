@@ -2,6 +2,7 @@
 import { URL, SHARE_DOMAIN_URL } from 'config';
 import * as ICONS from 'constants/icons';
 import * as PAGES from 'constants/pages';
+import * as MODALS from 'constants/modal_types';
 import React from 'react';
 import classnames from 'classnames';
 import { Menu, MenuButton, MenuList, MenuItem } from '@reach/menu-button';
@@ -21,6 +22,9 @@ type Props = {
   doToggleMuteChannel: (string) => void,
   doCommentModBlock: (string) => void,
   doCommentModUnBlock: (string) => void,
+  doCollectionEdit: (string, any) => void,
+  hasClaimInWatchLater: boolean,
+  doOpenModal: (string, {}) => void,
 };
 
 function ClaimMenuList(props: Props) {
@@ -34,6 +38,9 @@ function ClaimMenuList(props: Props) {
     channelIsBlocked,
     doCommentModBlock,
     doCommentModUnBlock,
+    doCollectionEdit,
+    hasClaimInWatchLater,
+    doOpenModal,
   } = props;
 
   const { push } = useHistory();
@@ -87,18 +94,26 @@ function ClaimMenuList(props: Props) {
         {/* if stream, add to watch later, add to collection modal */}
         {isStream && (
           <>
-            <MenuItem className="comment__menu-option" onSelect={() => alert('watch later')}>
+            <MenuItem
+              className="comment__menu-option"
+              onSelect={() =>
+                doCollectionEdit('watchlater', { claims: [claim], remove: hasClaimInWatchLater, type: 'playlist' })
+              }
+            >
               <div className="menu__link">
-                <Icon aria-hidden icon={ICONS.DISCOVER} />
-                {__('Watch Later')}
+                <Icon aria-hidden icon={hasClaimInWatchLater ? ICONS.DELETE : ICONS.TIME} />
+                {hasClaimInWatchLater ? __('In Watch Later') : __('Watch Later')}
               </div>
             </MenuItem>
           </>
         )}
-        <MenuItem className="comment__menu-option" onSelect={() => alert('Add')}>
+        <MenuItem
+          className="comment__menu-option"
+          onSelect={() => doOpenModal(MODALS.COLLECTION_ADD, { uri, type: 'playlist' })}
+        >
           <div className="menu__link">
-            <Icon aria-hidden icon={ICONS.ADD} />
-            {__('Add to collection')}
+            <Icon aria-hidden icon={ICONS.STACK} />
+            {__('Edit Collections')}
           </div>
         </MenuItem>
         <hr className="menu__separator" />

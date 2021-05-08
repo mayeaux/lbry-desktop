@@ -2,7 +2,6 @@
 import * as MODALS from 'constants/modal_types';
 import * as ICONS from 'constants/icons';
 import React from 'react';
-import classnames from 'classnames';
 import Button from 'component/button';
 
 type Props = {
@@ -10,16 +9,21 @@ type Props = {
   doOpenModal: (string, {}) => void,
   fileAction?: boolean,
   link?: boolean,
+  type?: boolean,
+  claim: Claim,
 };
 
 export default function CollectionAddButton(props: Props) {
-  const { doOpenModal, uri, fileAction, link } = props;
+  const { doOpenModal, uri, fileAction, link, type = 'playlist', claim } = props;
 
-  // one form for claim actions, one for thumb
+  // $FlowFixMe
+  const streamType = (claim && claim.value && claim.value.stream_type) || '';
+  const isPlayable = streamType === 'video' || streamType === 'audio';
+
+  if (!isPlayable) return null;
   return (
     <Button
-      button={link ? 'link' : 'secondary'}
-      className={classnames({ 'button--file-action': fileAction })}
+      button={link ? 'link' : 'alt'}
       icon={fileAction ? ICONS.ADD : ICONS.LIBRARY}
       iconSize={fileAction ? 22 : undefined}
       label={uri ? __('Add to Collection --[button to support a claim]--') : 'New Collection'}
@@ -28,7 +32,7 @@ export default function CollectionAddButton(props: Props) {
       onClick={(e) => {
         e.preventDefault();
         e.stopPropagation();
-        doOpenModal(MODALS.COLLECTION_ADD, { uri });
+        doOpenModal(MODALS.COLLECTION_ADD, { uri, type });
       }}
     />
   );

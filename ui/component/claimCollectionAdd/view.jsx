@@ -13,7 +13,7 @@ type Props = {
   builtin: any,
   published: any,
   unpublished: any,
-  addCollection: (string, string) => void, // maybe promise
+  addCollection: (string, string) => void,
   closeModal: () => void,
   uri: string,
 };
@@ -21,23 +21,19 @@ type Props = {
 const ClaimCollectionAdd = (props: Props) => {
   const { builtin, published, unpublished, addCollection, claim, closeModal, uri } = props;
   const permanentUrl = claim && claim.permanent_url;
+  const isChannel = claim && claim.value_type === 'channel';
 
   const [newCollectionName, setNewCollectionName] = React.useState('');
-  const [newCollectionPlaylist, setNewCollectionPlaylist] = React.useState(false);
   const [newCollectionNameError, setNewCollectionNameError] = React.useState();
 
-  const isPlayable =
-    claim &&
-    claim.value &&
-    // $FlowFixMe
-    claim.value.stream_type &&
-    (claim.value.stream_type === 'audio' || claim.value.stream_type === 'video');
+  // TODO: when other collection types added, filter list in context
+  // const isPlayable =
+  //   claim &&
+  //   claim.value &&
+  //   // $FlowFixMe
+  //   claim.value.stream_type &&
+  //   (claim.value.stream_type === 'audio' || claim.value.stream_type === 'video');
 
-  React.useEffect(() => {
-    if (isPlayable) {
-      setNewCollectionPlaylist(true);
-    }
-  }, [isPlayable, setNewCollectionPlaylist]);
   function handleNameInput(e) {
     const { value } = e.target;
     setNewCollectionName(value);
@@ -49,49 +45,53 @@ const ClaimCollectionAdd = (props: Props) => {
   }
 
   function handleAddCollection() {
-    addCollection(newCollectionName, newCollectionPlaylist ? 'playlist' : 'collection');
+    addCollection(newCollectionName, isChannel ? 'collection' : 'playlist');
     setNewCollectionName('');
   }
 
   return (
     <Card
       title={__('Add to collection')}
-      subtitle={__('Add uri to collection')}
       actions={
         <div className="card__body">
-          <fieldset-section>
-            {uri && (
-              <>
-                {/* $FlowFixMe */}
-                {Object.values(builtin).map((l) => {
-                  const { id } = l;
-                  return <CollectionSelectItem collectionId={id} uri={permanentUrl} key={id} category={'builtin'} />;
-                })}
-                {unpublished &&
+          {uri && (
+            <fieldset-section>
+              <div className={'card__body-scrollable'}>
+                {(Object.values(builtin): any)
                   // $FlowFixMe
-                  Object.values(unpublished).map((l) => {
+                  .filter((list) => (isChannel ? list.type === 'collection' : list.type === 'playlist'))
+                  .map((l) => {
                     const { id } = l;
-                    return (
-                      <CollectionSelectItem collectionId={id} uri={permanentUrl} key={id} category={'unpublished'} />
-                    );
+                    return <CollectionSelectItem collectionId={id} uri={permanentUrl} key={id} category={'builtin'} />;
                   })}
+                {unpublished &&
+                  (Object.values(unpublished): any)
+                    // $FlowFixMe
+                    .filter((list) => (isChannel ? list.type === 'collection' : list.type === 'playlist'))
+                    .map((l) => {
+                      const { id } = l;
+                      return (
+                        <CollectionSelectItem collectionId={id} uri={permanentUrl} key={id} category={'unpublished'} />
+                      );
+                    })}
                 {published &&
-                  // $FlowFixMe
-                  Object.values(published).map((l) => {
+                  (Object.values(published): any).map((l) => {
+                    // $FlowFixMe
                     const { id } = l;
                     return (
                       <CollectionSelectItem collectionId={id} uri={permanentUrl} key={id} category={'published'} />
                     );
                   })}
-              </>
-            )}
-          </fieldset-section>
+              </div>
+            </fieldset-section>
+          )}
           <fieldset-section>
             <FormField
               type="text"
               name="new_collection"
               value={newCollectionName}
               error={newCollectionNameError}
+              label={'name'}
               inputButton={
                 <Button
                   button={'secondary'}
@@ -101,14 +101,6 @@ const ClaimCollectionAdd = (props: Props) => {
                 />
               }
               onChange={handleNameInput}
-              placeholder={__('New Collection')}
-            />
-            <FormField
-              checked={newCollectionPlaylist}
-              type="checkbox"
-              onClick={() => setNewCollectionPlaylist(!newCollectionPlaylist)}
-              name="replace-claims"
-              label={__('Playable List')}
             />
           </fieldset-section>
           <div className="card__actions">

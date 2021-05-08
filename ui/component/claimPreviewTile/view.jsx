@@ -177,13 +177,17 @@ function ClaimPreviewTile(props: Props) {
           {!isChannel && (
             <React.Fragment>
               {/* @if TARGET='app' */}
-              <div className="claim-preview__hover-actions">
-                <FileDownloadLink uri={canonicalUrl} hideOpenButton />
-              </div>
+              {!collectionId && (
+                <div className="claim-preview__hover-actions">
+                  <FileDownloadLink uri={canonicalUrl} hideOpenButton />
+                </div>
+              )}
               {/* @endif */}
-              <div className="claim-preview__file-property-overlay">
-                <FileProperties uri={uri} small properties={properties} />
-              </div>
+              {!collectionId && (
+                <div className="claim-preview__file-property-overlay">
+                  <FileProperties uri={uri} small properties={properties} />
+                </div>
+              )}
             </React.Fragment>
           )}
         </FileThumbnail>
@@ -196,7 +200,7 @@ function ClaimPreviewTile(props: Props) {
               <UriIndicator uri={uri} />
             </div>
           )}
-          <ClaimMenuList uri={uri} />
+          {!collectionId && <ClaimMenuList uri={uri} />}
         </h2>
       </NavLink>
       <div>

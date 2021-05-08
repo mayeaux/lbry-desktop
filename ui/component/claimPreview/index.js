@@ -11,7 +11,9 @@ import {
   makeSelectClaimWasPurchased,
   makeSelectStreamingUrlForUri,
   makeSelectClaimIsStreamPlaceholder,
+  makeSelectCollectionIsMine,
   doCollectionEdit,
+  makeSelectUrlsForCollectionId,
 } from 'lbry-redux';
 import { selectMutedChannels, makeSelectChannelIsMuted } from 'redux/selectors/blocked';
 import { selectBlackListedOutpoints, selectFilteredOutpoints } from 'lbryinc';
@@ -41,6 +43,8 @@ const select = (state, props) => ({
   streamingUrl: props.uri && makeSelectStreamingUrlForUri(props.uri)(state),
   wasPurchased: props.uri && makeSelectClaimWasPurchased(props.uri)(state),
   isLivestream: makeSelectClaimIsStreamPlaceholder(props.uri)(state),
+  isCollectionMine: makeSelectCollectionIsMine(props.collectionId)(state),
+  collectionUris: makeSelectUrlsForCollectionId(props.collectionId)(state),
 });
 
 const perform = (dispatch) => ({

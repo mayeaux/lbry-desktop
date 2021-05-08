@@ -1,7 +1,8 @@
+// @flow
 import React from 'react';
 import CollectionPreviewTile from 'component/collectionPreviewTile';
 import ClaimList from 'component/claimList';
-import ClaimCollectionAddButton from 'component/claimCollectionAddButton';
+import Button from '../button';
 
 type Props = {
   builtinCollections: Array<Collection>,
@@ -11,57 +12,54 @@ type Props = {
   // savedCollections: CollectionGroup,
 };
 
-export default function CollectionsListMine(props) {
+export default function CollectionsListMine(props: Props) {
   const {
     builtinCollections,
-    publishedCollections,
     publishedPlaylists,
     unpublishedCollections,
     // savedCollections, these are resolved on startup from sync'd claimIds or urls
   } = props;
 
-  const builtinCollectionsList = Object.values(builtinCollections);
-  const unpublishedCollectionsList = Object.keys(unpublishedCollections);
+  const builtinCollectionsList = (Object.values(builtinCollections || {}): any);
+  const unpublishedCollectionsList = (Object.keys(unpublishedCollections || {}): any);
 
   return (
     <>
-      {unpublishedCollectionsList.length > 0 && (
-        <div className="claim-grid">
-          {unpublishedCollectionsList.map((key) => {
-            return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
-          })}
-        </div>
-      )}
-
       {builtinCollectionsList.map((list: Collection) => {
-        const items = list.items;
-        // $FlowFixMe
-        const itemurls = items;
-        // $FlowFixMe
-        if (!itemurls.length) return null;
+        const { items: itemUrls } = list;
+        if (!itemUrls.length) return null;
         return (
           <>
-            <h1>{list.name}</h1>
-            <ClaimList tileLayout key={list.name} uris={itemurls} collectionId={list.id} />
+            <h1>
+              <Button button="link" navigate={`/$/collection/${list.id}`} label={list.name} />
+            </h1>
+            <ClaimList tileLayout key={list.name} uris={itemUrls} collectionId={list.id} />
           </>
         );
       })}
 
-      <h1>Published Collections</h1>
-      <div className={'claim-grid'}>
-        {/* $FlowFixMe */}
-        {Object.keys(publishedCollections).map((key) => {
-          // $FlowFixMe
-          return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
-        })}
-      </div>
-      <h1>Published Playlists</h1>
-      <div className={'claim-grid'}>
-        {/* $FlowFixMe */}
-        {Object.keys(publishedPlaylists).map((key) => {
-          return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
-        })}
-      </div>
+      {unpublishedCollectionsList && unpublishedCollectionsList.length > 0 && (
+        <>
+          <h1>Unpublished Playlists</h1>
+          <div className="claim-grid">
+            {unpublishedCollectionsList &&
+              unpublishedCollectionsList.map((key) => (
+                <CollectionPreviewTile tileLayout collectionId={key} key={key} />
+              ))}
+          </div>
+        </>
+      )}
+
+      {Boolean(Object.keys(publishedPlaylists).length) && (
+        <>
+          <h1>Published Playlists</h1>
+          <div className={'claim-grid'}>
+            {(Object.keys(publishedPlaylists): any).map((key) => {
+              return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
+            })}
+          </div>
+        </>
+      )}
     </>
   );
 }

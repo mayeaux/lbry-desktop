@@ -8,7 +8,7 @@ import Button from 'component/button';
 import TagsSearch from 'component/tagsSearch';
 import { FF_MAX_CHARS_IN_DESCRIPTION } from 'constants/form-field';
 import ErrorText from 'component/common/error-text';
-import CollectionThumbnail from 'component/channelThumbnail';
+import CollectionThumbnail from 'component/fileThumbnail';
 import { isNameValid } from 'lbry-redux';
 import ClaimAbandonButton from 'component/claimAbandonButton';
 import { useHistory } from 'react-router-dom';
@@ -110,7 +110,7 @@ function CollectionForm(props: Props) {
     // fill this in with sdk data
     const collectionParams: {
       thumbnail_url?: string,
-      name: string,
+      name?: string,
       description?: string,
       title?: string,
       bid: string,
@@ -124,7 +124,6 @@ function CollectionForm(props: Props) {
       thumbnail_url: thumbnailUrl,
       description,
       title,
-      name: collectionName,
       bid: String(amount || 0.001),
       languages: languages || [],
       locations: locations || [],
@@ -138,6 +137,14 @@ function CollectionForm(props: Props) {
 
     if (activeChannelId) {
       collectionParams['channel_id'] = activeChannelId;
+    }
+
+    if (!claim) {
+      collectionParams['name'] = collectionName;
+    }
+
+    if (claim) {
+      collectionParams['claim_id'] = claim.claim_id;
     }
 
     return collectionParams;
@@ -242,7 +249,7 @@ function CollectionForm(props: Props) {
                     title: __('Edit Thumbnail Image'),
                     helpText: __('(1:1)'),
                     assetName: __('Thumbnail'),
-                    currentValue: params.thumbnailUrl,
+                    currentValue: params.thumbnail_url,
                   })
                 }
                 icon={ICONS.CAMERA}
@@ -252,7 +259,7 @@ function CollectionForm(props: Props) {
 
             <h1 className="channel__title">{params.title || (params.name && params.name) || collectionName}</h1>
             <h1 className="channel__title">{nameError && nameError}</h1>
-            <CollectionThumbnail uri={uri} thumbnailPreview={params.thumbnailUrl} allowGifs showDelayedMessage />
+            <CollectionThumbnail uri={uri} thumbnailPreview={params.thumbnail_url} allowGifs showDelayedMessage />
           </div>
           <div className="channel-cover__gradient" />
         </header>
@@ -327,7 +334,7 @@ function CollectionForm(props: Props) {
                     name="content_bid2"
                     step="any"
                     label={<LbcSymbol postfix={__('Deposit')} size={14} />}
-                    value={params.amount}
+                    value={params.bid}
                     error={bidError}
                     min="0.0"
                     disabled={false}

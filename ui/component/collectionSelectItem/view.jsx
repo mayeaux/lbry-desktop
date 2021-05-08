@@ -24,10 +24,10 @@ function CollectionSelectItem(props: Props) {
   let icon;
   switch (category) {
     case 'builtin':
-      icon = ICONS.HOME;
+      icon = id === 'watchlater' ? ICONS.TIME : ICONS.STACK;
       break;
     case 'published':
-      icon = ICONS.PUBLISH;
+      icon = ICONS.STACK;
       break;
     default:
       // 'unpublished'
@@ -36,15 +36,20 @@ function CollectionSelectItem(props: Props) {
   }
 
   return (
-    <div style={{ display: 'flex' }}>
-      <Icon icon={icon} />
+    <div className={'collection-select__item'}>
       <FormField
         checked={hasClaim}
         disabled={collectionPending}
+        icon={icon}
         type="checkbox"
         name={`select-${id}`}
         onChange={handleChange} // edit the collection
-        label={name} // the collection name
+        label={
+          <span>
+            <Icon icon={icon} className={'icon-collection-select'} />
+            {`${name}`}
+          </span>
+        } // the collection name
       />
     </div>
   );

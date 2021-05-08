@@ -91,7 +91,7 @@ function SideNavigation(props: Props) {
     {
       title: 'Library',
       link: `/$/${PAGES.LIBRARY}`,
-      icon: ICONS.LBRY,
+      icon: ICONS.STACK,
       hideForUnauth: true,
     },
   ];

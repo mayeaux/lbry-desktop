@@ -157,3 +157,5 @@ export const MIND_BLOWN = 'MindBlown';
 export const LIVESTREAM = 'Livestream';
 export const LIVESTREAM_SOLID = 'LivestreamSolid';
 export const LIVESTREAM_MONOCHROME = 'LivestreamMono';
+export const STACK = 'stack';
+export const TIME = 'time';

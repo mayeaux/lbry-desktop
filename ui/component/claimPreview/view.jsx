@@ -30,7 +30,7 @@ import * as ICONS from 'constants/icons';
 
 type Props = {
   uri: string,
-  claim: ?Claim,
+  claim: Claim,
   obscureNsfw: boolean,
   showUserBlocked: boolean,
   claimIsMine: boolean,
@@ -73,8 +73,10 @@ type Props = {
   hideMenu?: boolean,
   isLivestream?: boolean,
   collectionId?: string,
-  collectionIndex?: string,
+  collectionIndex: ?number,
   editCollection: (string, CollectionUpdateParams) => void,
+  isCollectionMine: boolean,
+  collectionUris: Array<Collection>,
 };
 
 const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
@@ -128,14 +130,17 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
     collectionId,
     collectionIndex,
     editCollection,
+    isCollectionMine,
+    collectionUris,
   } = props;
   const WrapperElement = wrapperElement || 'li';
   const shouldFetch =
     claim === undefined || (claim !== null && claim.value_type === 'channel' && isEmpty(claim.meta) && !pending);
   const abandoned = !isResolvingUri && !claim;
-  const isMyCollection = collectionId && (claimIsMine || collectionId.includes('-'));
+  const isMyCollection = collectionId && (isCollectionMine || collectionId.includes('-'));
   const shouldHideActions = hideActions || isMyCollection || type === 'small' || type === 'tooltip';
   const canonicalUrl = claim && claim.canonical_url;
+  const lastCollectionIndex = collectionUris ? collectionUris.length - 1 : 0;
   let isValid = false;
   if (uri) {
     try {
@@ -154,7 +159,7 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
   if (collectionId) {
     const collectionParams = new URLSearchParams();
     collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_ID, collectionId);
-    if (collectionIndex) collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_INDEX, collectionIndex);
+    if (collectionIndex) collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_INDEX, String(collectionIndex));
     navigateUrl = navigateUrl + `?` + collectionParams.toString();
   }
   const navLinkProps = {
@@ -325,44 +330,57 @@ const ClaimPreview = forwardRef<any, {}>((props: Props, ref: any) => {
                 {!pending && (
                   <>
                     {renderActions && claim && renderActions(claim)}
-                    {isMyCollection && (
-                      <span className="help">
-                      <Button
-                        button="alt"
-                        disabled={collectionIndex === 0}
-                        icon={ICONS.UP}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (editCollection) {
-                            // $FlowFixMe
-                            editCollection(collectionId, { order: { from: collectionIndex, to: collectionIndex - 1 } });
-                          }
-                        }}
-                      />
-                      <Button
-                        button="alt"
-                        icon={ICONS.DOWN}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          if (editCollection) {
-                            // $FlowFixMe
-                            editCollection(collectionId, { order: { from: collectionIndex, to: collectionIndex + 1 } });
-                          }
-                        }}
-                      />
-                      <Button
-                        button="alt"
-                        icon={ICONS.REMOVE}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          e.stopPropagation();
-                          // $FlowFixMe
-                          if (editCollection) editCollection(collectionId, { claims: [claim], remove: true });
-                        }}
-                      />
-                    </span>
+                    {isMyCollection && collectionId && collectionIndex && (
+                      <>
+                        <div className="collection-edit-buttons">
+                          <div className="collection-edit-group">
+                            <Button
+                              button="alt"
+                              className={'button-collection-order'}
+                              disabled={collectionIndex === 0}
+                              icon={ICONS.UP}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (editCollection) {
+                                  // $FlowFixMe
+                                  editCollection(collectionId, {
+                                    order: { from: collectionIndex, to: collectionIndex - 1 },
+                                  });
+                                }
+                              }}
+                            />
+                            <Button
+                              button="alt"
+                              className={'button-collection-order'}
+                              icon={ICONS.DOWN}
+                              disabled={collectionIndex === lastCollectionIndex}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (editCollection) {
+                                  // $FlowFixMe
+                                  editCollection(collectionId, {
+                                    order: { from: collectionIndex, to: collectionIndex + 1 },
+                                  });
+                                }
+                              }}
+                            />
+                          </div>
+                          <div className="collection-edit-group">
+                            <Button
+                              button="alt"
+                              icon={ICONS.DELETE}
+                              onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                // $FlowFixMe
+                                if (editCollection) editCollection(collectionId, { claims: [claim], remove: true });
+                              }}
+                            />
+                          </div>
+                        </div>
+                      </>
                     )}
                     {shouldHideActions || renderActions ? null : actions !== undefined ? (
                       actions

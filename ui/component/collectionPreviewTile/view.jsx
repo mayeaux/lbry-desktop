@@ -1,20 +1,14 @@
 // @flow
 import React from 'react';
 import classnames from 'classnames';
-import { NavLink, withRouter } from 'react-router-dom';
-import UriIndicator from 'component/uriIndicator';
-import TruncatedText from 'component/common/truncated-text';
-import DateTime from 'component/dateTime';
-import ChannelThumbnail from 'component/channelThumbnail';
-import SubscribeButton from 'component/subscribeButton';
+import { useHistory, withRouter } from 'react-router-dom';
 // import useGetThumbnail from 'effects/use-get-thumbnail';
-import { formatLbryUrlForWeb } from 'util/url';
-import ClaimPreview from 'component/claimPreview';
+// import { formatLbryUrlForWeb } from 'util/url';
 import * as PAGES from 'constants/pages';
-import { COLLECTIONS_CONSTS } from 'lbry-redux';
+// import { COLLECTIONS_CONSTS } from 'lbry-redux';
 import Button from 'component/button';
+import Card from 'component/common/card';
 import ClaimPreviewTile from 'component/claimPreviewTile';
-import * as ICONS from 'constants/icons';
 
 type Props = {
   uri: string,
@@ -50,13 +44,13 @@ type Props = {
 
 function CollectionPreviewTile(props: Props) {
   const {
-    history,
-    uri,
+    // history,
+    // uri,
     collectionId,
     collectionName,
     isResolvingUri,
     // thumbnail,
-    title,
+    // title,
     claim,
     // channelClaim,
     collectionItemUrls,
@@ -65,14 +59,13 @@ function CollectionPreviewTile(props: Props) {
     blockedChannelUris,
     isMature,
     showMature,
-    deleteCollection,
-    editedCollection,
-    pendingCollection,
+    // editedCollection,
+    // pendingCollection,
     resolveCollectionItems,
   } = props;
-  console.log('props', props);
   // const shouldFetch = claim === undefined;
   // const canonicalUrl = claim && claim.canonical_url; uncomment after sdk resolve fix
+  const { push } = useHistory();
 
   const hasClaim = Boolean(claim);
   React.useEffect(() => {
@@ -82,37 +75,30 @@ function CollectionPreviewTile(props: Props) {
   }, [collectionId, hasClaim]);
 
   // const channelUrl = channelClaim && channelClaim.permanent_url;
-  const firstCollectionUrl = collectionItemUrls[0];
-  let navigateUrl = firstCollectionUrl && formatLbryUrlForWeb(firstCollectionUrl);
-  if (collectionId) {
-    const collectionParams = new URLSearchParams();
-    collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_ID, collectionId);
-    navigateUrl = navigateUrl + `?` + collectionParams.toString();
-  }
-  // const navigateUrl = formatLbryUrlForWeb(permanentUrl || uri || `/$/${PAGES.COLLECTION}/${collectionId}`);
-
-  const firstUrl = collectionItemUrls && collectionItemUrls[0];
-  const isChannel = false;
-  const navLinkProps = {
-    to: navigateUrl,
-    onClick: (e) => e.stopPropagation(),
-  };
-
+  // const firstCollectionUrl = collectionItemUrls[0];
+  // let navigateUrl = firstCollectionUrl && formatLbryUrlForWeb(firstCollectionUrl);
+  // if (collectionId) {
+  //   const collectionParams = new URLSearchParams();
+  //   collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_ID, collectionId);
+  //   navigateUrl = navigateUrl + `?` + collectionParams.toString();
+  // }
+  // // const navigateUrl = formatLbryUrlForWeb(permanentUrl || uri || `/$/${PAGES.COLLECTION}/${collectionId}`);
+  //
   const signingChannel = claim && claim.signing_channel;
-  let channelThumbnail;
-  if (signingChannel) {
-    channelThumbnail =
-      // I should be able to just pass the the uri to <ChannelThumbnail /> but it wasn't working
-      // Come back to me
-      (signingChannel.value && signingChannel.value.thumbnail && signingChannel.value.thumbnail.url) || undefined;
-  }
-
-  function handleClick(e) {
-    // go to first url + collectionId
-    if (navigateUrl) {
-      history.push(navigateUrl);
-    }
-  }
+  // let channelThumbnail;
+  // if (signingChannel) {
+  //   channelThumbnail =
+  //     // I should be able to just pass the the uri to <ChannelThumbnail /> but it wasn't working
+  //     // Come back to me
+  //     (signingChannel.value && signingChannel.value.thumbnail && signingChannel.value.thumbnail.url) || undefined;
+  // }
+  //
+  // function handleClick(e) {
+  //   // go to first url + collectionId
+  //   if (navigateUrl) {
+  //     history.push(navigateUrl);
+  //   }
+  // }
 
   let shouldHide = false;
 
@@ -165,85 +151,40 @@ function CollectionPreviewTile(props: Props) {
 
   if (collectionItemUrls && collectionItemUrls.length > 0) {
     return (
-      <li className="collection-preview">
-        <div className="collection-preview__info">
-          <div className="claim-grid__title">{collectionName}</div>
-
-          <div className="section__actions--no-margin">
-            <Button label={__('View')} button="secondary" icon={ICONS.EYE} />
-            <Button label={__('Publish')} button="alt" icon={ICONS.PUBLISH} />
-            <Button label={__('Delete')} button="alt" icon={ICONS.DELETE} />
-          </div>
-        </div>
-        <div className="collection-preview__items">
-          {collectionItemUrls.slice(0, 3).map((uri) => (
-            <ClaimPreviewTile uri={uri} />
-          ))}
-        </div>
+      <li className="collection-preview claim-preview--tile">
+        <Card
+          title={
+            <Button
+              label={<div className="claim-grid__title">{collectionName}</div>}
+              button="link"
+              navigate={`/$/${PAGES.COLLECTION}/${collectionId}`}
+            />
+          }
+          role={'button'}
+          onClick={() => push(`/$/${PAGES.COLLECTION}/${collectionId}`)}
+          actions={
+            <div className="collection-preview__items">
+              {collectionItemUrls.slice(0, 1).map((uri) => (
+                <ClaimPreviewTile collectionId={collectionId} uri={uri} key={'tile' + uri} />
+              ))}
+            </div>
+          }
+        />
       </li>
     );
   }
-  //   return (
-  //     <li
-  //       role="link"
-  //       onClick={handleClick}
-  //       className={classnames('card claim-preview--tile', {
-  //         'claim-preview__wrapper--channel': false,
-  //       })}
-  //     >
-  //       <NavLink {...navLinkProps}>
-  //         <ClaimPreview uri={firstUrl} key={firstUrl} type={'small'} />
-  //       </NavLink>
-  //       <NavLink {...navLinkProps}>
-  //         <h2 className="claim-tile__title">
-  //           <Button
-  //             button="link"
-  //             label={
-  //               <TruncatedText text={__('Collection: ') + (title || (claim && claim.name) || collectionName)} lines={2} />
-  //             }
-  //             onClick={(e) => {
-  //               e.preventDefault();
-  //               e.stopPropagation();
-  //               history.push(`/$/${PAGES.COLLECTION}/${collectionId}`);
-  //             }}
-  //           />
-  //           <Button
-  //             icon={ICONS.REMOVE}
-  //             onClick={(e) => {
-  //               e.preventDefault();
-  //               e.stopPropagation();
-  //               deleteCollection(collectionId);
-  //             }}
-  //           />
-  //         </h2>
-  //         <h2 className="claim-tile__title">{`${collectionItemUrls.length} Items`}</h2>
-  //         {pendingCollection && <h2 className="claim-tile__title">Pending</h2>}
-  //         {editedCollection && <h2 className="claim-tile__title">Edited</h2>}
-  //       </NavLink>
-  //       <div>
-  //         {claim && (
-  //           <div className="claim-tile__info">
-  //             {isChannel ? (
-  //               <div className="claim-tile__about--channel">
-  //                 <SubscribeButton uri={uri} />
-  //               </div>
-  //             ) : (
-  //               <React.Fragment>
-  //                 <UriIndicator uri={uri} link hideAnonymous>
-  //                   <ChannelThumbnail thumbnailPreview={channelThumbnail} />
-  //                 </UriIndicator>
-
-  //                 <div className="claim-tile__about">
-  //                   <UriIndicator uri={uri} link />
-  //                   <DateTime timeAgo uri={uri} />
-  //                 </div>
-  //               </React.Fragment>
-  //             )}
-  //           </div>
-  //         )}
-  //       </div>
-  //     </li>
-  //   );
+  return (
+    <li className="collection-preview claim-preview--tile">
+      <Card
+        title={<div className="claim-grid__title">{collectionName}</div>}
+        actions={
+          <div className="collection-preview__items">
+            <h1>No items</h1>
+          </div>
+        }
+      />
+    </li>
+  );
 }
 
 export default withRouter(CollectionPreviewTile);

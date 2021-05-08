@@ -292,6 +292,10 @@
   }
 }
 
+.card__body-scrollable {
+  overflow-y: scroll;
+}
+
 .card__main-actions {
   padding: var(--spacing-m);
   padding-bottom: 0;

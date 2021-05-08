@@ -1779,7 +1779,8 @@ export const icons = {
           d="M-506.9,1532.1c1.8-1.8,2.9-4.3,2.9-7.1c0-2.6-1-4.9-2.5-6.7L-506.9,1532.1z"
         />
       </g>
-      <rect id="XMLID_125_" x="0" y="0" fill="none" width="36" height="36" stroke="none" /> {/* }//fill="#FFFFFF" */}
+      <rect id="XMLID_125_" x="0" y="0" fill="none" width="36" height="36" stroke="none" />
+      {/* }//fill="#FFFFFF" */}
       <linearGradient
         id="XMLID_421_"
         gradientUnits="userSpaceOnUse"
@@ -2041,7 +2042,8 @@ export const icons = {
           d="M-506.9,1532.1c1.8-1.8,2.9-4.3,2.9-7.1c0-2.6-1-4.9-2.5-6.7L-506.9,1532.1z"
         />
       </g>
-      <rect id="XMLID_125_" x="0" y="0" fill="none" width="36" height="36" stroke="none" /> {/* }//fill="#FFFFFF" */}
+      <rect id="XMLID_125_" x="0" y="0" fill="none" width="36" height="36" stroke="none" />
+      {/* }//fill="#FFFFFF" */}
       <linearGradient
         id="XMLID_421_"
         gradientUnits="userSpaceOnUse"
@@ -2250,6 +2252,46 @@ export const icons = {
         strokeLinejoin="round"
         strokeMiterlimit={10}
       />
+    </svg>
+  ),
+  [ICONS.STACK]: (props: CustomProps) => (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      width={props.size || '18'}
+      height={props.size || '18'}
+      xmlns="http://www.w3.org/2000/svg"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      stroke="currentColor"
+      fill="none"
+    >
+      <g transform="matrix(1,0,0,1,0,0)">
+        <path d="M22.91,6.953,12.7,1.672a1.543,1.543,0,0,0-1.416,0L1.076,6.953a.615.615,0,0,0,0,1.094l10.209,5.281a1.543,1.543,0,0,0,1.416,0L22.91,8.047a.616.616,0,0,0,0-1.094Z" />
+        <path d="M.758,12.75l10.527,5.078a1.543,1.543,0,0,0,1.416,0L23.258,12.75" />
+        <path d="M.758,17.25l10.527,5.078a1.543,1.543,0,0,0,1.416,0L23.258,17.25" />
+      </g>
+    </svg>
+  ),
+  [ICONS.TIME]: (props: CustomProps) => (
+    <svg
+      {...props}
+      viewBox="0 0 24 24"
+      width={props.size || '18'}
+      height={props.size || '18'}
+      xmlns="http://www.w3.org/2000/svg"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      stroke="currentColor"
+      fill="none"
+    >
+      <g transform="matrix(1,0,0,1,0,0)">
+        <path d="M1.500 12.000 A10.500 10.500 0 1 0 22.500 12.000 A10.500 10.500 0 1 0 1.500 12.000 Z" />
+        <path d="M12 12L12 8.25" />
+        <path d="M12 12L16.687 16.688" />
+      </g>
     </svg>
   ),
 };
