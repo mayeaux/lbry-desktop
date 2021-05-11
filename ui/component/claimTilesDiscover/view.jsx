@@ -251,7 +251,7 @@ function ClaimTilesDiscover(props: Props) {
   const shouldPerformSearch = !isLoading && uris.length === 0;
 
   const fixUris = [
-    'lbry://@Destiny#6/conservative-debate-derails-into#e',
+    'lbry://@Destiny#6/avenging-richard-wolff-sensible#3',
     'lbry://@CrackerMilk#6/becoming-a-psychopath#1',
     'lbry://@hammyandolivia#c/dog-runs-from-a-dinosaur!-shorts-corgi#0',
   ];
