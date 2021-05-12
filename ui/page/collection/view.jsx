@@ -1,16 +1,12 @@
 // @flow
-import * as ICONS from 'constants/icons';
-import { COLLECTIONS_CONSTS as COLS } from 'lbry-redux';
 import React from 'react';
 import ClaimList from 'component/claimList';
 import Page from 'component/page';
-import Button from 'component/button';
 import * as PAGES from 'constants/pages';
-import ShareButton from 'component/shareButton';
 import { useHistory } from 'react-router-dom';
 import CollectionEdit from 'component/collectionEdit';
 import Card from 'component/common/card';
-import FileActions from 'component/fileActions';
+import CollectionActions from 'component/collectionActions';
 import classnames from 'classnames';
 import ClaimAuthor from 'component/claimAuthor';
 import FileDescription from 'component/fileDescription';
@@ -28,12 +24,12 @@ type Props = {
   thumbnail: string,
   collection: Collection,
   collectionUrls: Array<string>,
-
+  collectionCount: number,
   isResolvingCollection: boolean,
   isMyClaim: boolean,
   isMyCollection: boolean,
   claimIsPending: boolean,
-
+  collectionHasEdits: boolean,
   deleteCollection: (string) => void,
   editCollection: (string, CollectionUpdateParams) => void,
   fetchCollectionItems: (string, () => void) => void,
@@ -51,17 +47,14 @@ export default function CollectionPage(props: Props) {
     collection,
     collectionUrls,
 
+    collectionCount,
+    collectionHasEdits,
     isResolvingCollection,
-    isMyClaim,
-    isMyCollection,
-    claimIsPending,
 
     fetchCollectionItems,
-    deleteCollection,
   } = props;
 
   const {
-    push,
     replace,
     location: { search },
   } = useHistory();
@@ -75,8 +68,6 @@ export default function CollectionPage(props: Props) {
   const urlParams = new URLSearchParams(search);
   const editing = urlParams.get(PAGE_VIEW_QUERY) === EDIT_PAGE;
 
-  const isMine = isMyClaim || isMyCollection; // isMyCollection
-  const builtin = COLS.BUILTIN_LISTS.includes(collectionId);
   const urlsReady =
     (collectionUrls && totalItems === undefined) || // ready if totalItems is missing
     (collectionUrls && totalItems && totalItems === collectionUrls.length); // ready if collectionUrls length = resolved totalItems
@@ -88,85 +79,26 @@ export default function CollectionPage(props: Props) {
     }
   }, [collectionId, urlsReady, didTryResolve, shouldFetch, setDidTryResolve, fetchCollectionItems]);
 
-  function handleDeleteCollection() {
-    // just do a delete modal confirm
-    deleteCollection(collectionId);
-    replace(`/$/${PAGES.LIBRARY}/`);
-  }
-  const buttons = (
+  const subTitle = (
     <div>
-      {uri && <ShareButton uri={uri} />}
-      {isMine && !builtin && (
-        <>
-          {claimIsPending ? (
-            <span>{__('Your changes will be live in a few minutes')}</span>
-          ) : (
-            <>
-              <Button
-                button="alt"
-                title={uri ? __('Edit') : __('Publish')}
-                label={uri ? __('Edit') : __('Publish')}
-                onClick={() => push(`?${PAGE_VIEW_QUERY}=${EDIT_PAGE}`)}
-                icon={ICONS.PUBLISH}
-                iconSize={18}
-                disabled={claimIsPending}
-              />
-              <Button
-                button="alt"
-                title={__('Delete')}
-                onClick={handleDeleteCollection}
-                icon={ICONS.DELETE}
-                iconSize={18}
-                disabled={claimIsPending}
-              />
-              <Button
-                className={classnames('button-toggle', {
-                  'button-toggle--active': showInfo,
-                })}
-                label={__('Info')}
-                onClick={() => setShowInfo(!showInfo)}
-              />
-            </>
-          )}
-        </>
-      )}
-      {!isMine && (
-        <>
-          {claimIsPending ? (
-            <span>{__('Your changes will be live in a few minutes')}</span>
-          ) : (
-            <>
-              <Button
-                button="alt"
-                title={__('Save')}
-                onClick={() => push(`?${PAGE_VIEW_QUERY}=${EDIT_PAGE}`)}
-                icon={ICONS.DOWNLOAD}
-                iconSize={18}
-                disabled={claimIsPending}
-              />
-              <Button
-                button="alt"
-                title={__('Copy')}
-                onClick={handleDeleteCollection}
-                icon={ICONS.COPY}
-                iconSize={18}
-                disabled={claimIsPending}
-              />
-            </>
-          )}
-        </>
-      )}
+      {uri ? <span>{collectionCount} items</span> : <span>{collectionCount} items</span>}
+      {uri && <ClaimAuthor uri={uri} />}
     </div>
   );
-
   const info = (
     <Card
-      title={collection && collection.name}
-      body={<FileActions uri={uri} />}
+      title={
+        <span>
+          {claim ? claim.value.title || claim.name : collection.name}
+          {collectionHasEdits && <span className={'collection-title--hasEdits'}>*</span>}
+        </span>
+      }
+      subtitle={subTitle}
+      body={<CollectionActions uri={uri} collectionId={collectionId} setShowInfo={setShowInfo} showInfo={showInfo} />}
       actions={
-        showInfo && (
+        showInfo &&
+        uri && (
           <div className="section">
-            <ClaimAuthor uri={uri} />
             <FileDescription uri={uri} />
           </div>
         )
@@ -203,8 +135,8 @@ export default function CollectionPage(props: Props) {
         <CollectionEdit
           uri={uri}
           collectionId={collectionId}
-          onDone={(claimId) => {
-            replace(`/$/${PAGES.COLLECTION}/${claimId}`);
+          onDone={() => {
+            replace(`/$/${PAGES.COLLECTION}/${collectionId}`);
           }}
         />
       </Page>
@@ -215,7 +147,6 @@ export default function CollectionPage(props: Props) {
   return (
     <Page>
       <div className={classnames('section card-stack')}>
-        {buttons}
         {info}
         <ClaimList uris={collectionUrls} collectionId={collectionId} />
       </div>

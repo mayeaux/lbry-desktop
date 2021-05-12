@@ -14,6 +14,7 @@ import {
   doFetchItemsInCollection,
   makeSelectEditedCollectionForId,
   makeSelectPendingCollectionForId,
+  makeSelectCountForCollectionId,
 } from 'lbry-redux';
 import { selectMutedChannels } from 'redux/selectors/blocked';
 import { selectBlackListedOutpoints, selectFilteredOutpoints } from 'lbryinc';
@@ -28,12 +29,13 @@ const select = (state, props) => {
   return {
     collectionId,
     uri: collectionUri,
+    collectionCount: makeSelectCountForCollectionId(collectionId)(state),
     collectionName: makeSelectNameForCollectionId(collectionId)(state),
     collectionItemUrls: makeSelectUrlsForCollectionId(collectionId)(state), // ForId || ForUri
     editedCollection: makeSelectEditedCollectionForId(collectionId)(state),
     pendingCollection: makeSelectPendingCollectionForId(collectionId)(state),
     claim,
-    channel: collectionUri && makeSelectChannelForClaimUri(collectionUri)(state),
+    channelClaim: collectionUri && makeSelectChannelForClaimUri(collectionUri)(state),
     isResolvingUri: collectionUri && makeSelectIsUriResolving(collectionUri)(state),
     thumbnail: collectionUri && makeSelectThumbnailForUri(collectionUri)(state),
     title: collectionUri && makeSelectTitleForUri(collectionUri)(state),

@@ -1931,5 +1931,12 @@
   "Edit Collections": "Edit Collections",
   "Delete Collection": "Delete Collection",
   "Info": "Info",
+  "Confirm Collection Unpublish": "Confirm Collection Unpublish",
+  "Unpublish Collection": "Unpublish Collection",
+  "Also delete this collection from my library": "Also delete this collection from my library",
+  "Are you sure you'd like to remove collection %title% from LBRY?": "Are you sure you'd like to remove collection %title% from LBRY?",
+  "Confirm Delete Playlist": "Confirm Delete Playlist",
+  "Playlists": "Playlists",
+  "Publishes": "Publishes",
   "--end--": "--end--"
 }

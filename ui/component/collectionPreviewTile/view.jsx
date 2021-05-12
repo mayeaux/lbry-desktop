@@ -5,21 +5,26 @@ import { useHistory, withRouter } from 'react-router-dom';
 // import useGetThumbnail from 'effects/use-get-thumbnail';
 // import { formatLbryUrlForWeb } from 'util/url';
 import * as PAGES from 'constants/pages';
+import * as ICONS from 'constants/icons';
 // import { COLLECTIONS_CONSTS } from 'lbry-redux';
 import Button from 'component/button';
 import Card from 'component/common/card';
 import ClaimPreviewTile from 'component/claimPreviewTile';
+import UriIndicator from '../uriIndicator';
+import ChannelThumbnail from 'component/channelThumbnail';
+import DateTime from 'component/dateTime';
+import Icon from 'component/common/icon';
 
 type Props = {
   uri: string,
   collectionId: string,
   collectionName: string,
+  collectionCount: number,
   editedCollection?: Collection,
   pendingCollection?: Collection,
   claim: ?Claim,
   channelClaim: ?ChannelClaim,
   collectionItemUrls: Array<string>,
-  channel?: ?ChannelClaim,
   resolveUri: (string) => void,
   isResolvingUri: boolean,
   history: { push: (string) => void },
@@ -45,14 +50,15 @@ type Props = {
 function CollectionPreviewTile(props: Props) {
   const {
     // history,
-    // uri,
+    uri,
     collectionId,
     collectionName,
+    collectionCount,
     isResolvingUri,
     // thumbnail,
     // title,
     claim,
-    // channelClaim,
+    channelClaim,
     collectionItemUrls,
     blackListedOutpoints,
     filteredOutpoints,
@@ -74,7 +80,7 @@ function CollectionPreviewTile(props: Props) {
     }
   }, [collectionId, hasClaim]);
 
-  // const channelUrl = channelClaim && channelClaim.permanent_url;
+  const channelUrl = channelClaim && channelClaim.permanent_url;
   // const firstCollectionUrl = collectionItemUrls[0];
   // let navigateUrl = firstCollectionUrl && formatLbryUrlForWeb(firstCollectionUrl);
   // if (collectionId) {
@@ -162,11 +168,38 @@ function CollectionPreviewTile(props: Props) {
           }
           role={'button'}
           onClick={() => push(`/$/${PAGES.COLLECTION}/${collectionId}`)}
-          actions={
+          body={
             <div className="collection-preview__items">
               {collectionItemUrls.slice(0, 1).map((uri) => (
                 <ClaimPreviewTile collectionId={collectionId} uri={uri} key={'tile' + uri} />
               ))}
+            </div>
+          }
+          // actions={<ClaimAuthor uri={uri} />}
+          actions={
+            <div className="claim-tile-collection__info">
+              {uri ? (
+                <React.Fragment>
+                  <UriIndicator uri={uri} link hideAnonymous>
+                    <ChannelThumbnail uri={channelUrl} />
+                  </UriIndicator>
+
+                  <div className="claim-tile__about">
+                    <UriIndicator uri={uri} link />
+                    <span>
+                      <DateTime timeAgo uri={uri} />
+                      <Icon icon={ICONS.STACK} />
+                      {collectionCount}
+                    </span>
+                  </div>
+                </React.Fragment>
+              ) : (
+                <span>
+                  Private
+                  <Icon icon={ICONS.STACK} />
+                  {collectionCount}
+                </span>
+              )}
             </div>
           }
         />

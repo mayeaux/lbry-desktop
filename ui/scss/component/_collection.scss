@@ -27,6 +27,9 @@
   }
 }
 
+.collection-title--hasEdits {
+  color: var(--color-primary);
+}
 .collection-select__item {
   display: flex;
   margin-bottom: var(--spacing-xs);

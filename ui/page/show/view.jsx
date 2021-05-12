@@ -13,8 +13,7 @@ import Card from 'component/common/card';
 import AbandonedChannelPreview from 'component/abandonedChannelPreview';
 import Yrbl from 'component/yrbl';
 import { formatLbryUrlForWeb } from 'util/url';
-import { parseURI } from 'lbry-redux';
-import { COLLECTIONS_CONSTS } from 'lbry-redux';
+import { parseURI, COLLECTIONS_CONSTS } from 'lbry-redux';
 
 type Props = {
   isResolvingUri: boolean,

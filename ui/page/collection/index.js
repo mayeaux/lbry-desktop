@@ -15,6 +15,9 @@ import {
   makeSelectCollectionIsMine,
   doLocalCollectionDelete,
   doCollectionEdit,
+  makeSelectChannelForClaimUri,
+  makeSelectCountForCollectionId,
+  makeSelectEditedCollectionForId,
 } from 'lbry-redux';
 import { selectUser } from 'redux/selectors/user';
 
@@ -26,19 +29,23 @@ const select = (state, props) => {
   const claim = collectionId && makeSelectClaimForClaimId(collectionId)(state);
   const uri = (claim && (claim.canonical_url || claim.permanent_url)) || null;
 
+  console.log('M', params, uri);
   return {
     collectionId,
     claim,
     collection: makeSelectCollectionForId(collectionId)(state),
     collectionUrls: makeSelectUrlsForCollectionId(collectionId)(state),
+    collectionCount: makeSelectCountForCollectionId(collectionId)(state),
     isResolvingCollection: makeSelectIsResolvingCollectionForId(collectionId)(state),
     title: makeSelectTitleForUri(uri)(state),
     thumbnail: makeSelectThumbnailForUri(uri)(state),
     isMyClaim: makeSelectClaimIsMine(uri)(state), // or collection is mine?
     isMyCollection: makeSelectCollectionIsMine(collectionId)(state),
     claimIsPending: makeSelectClaimIsPending(uri)(state),
+    collectionHasEdits: Boolean(makeSelectEditedCollectionForId(collectionId)(state)),
     uri,
     user: selectUser(state),
+    channel: uri && makeSelectChannelForClaimUri(uri)(state),
   };
 };
 

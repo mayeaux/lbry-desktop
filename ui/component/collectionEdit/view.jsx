@@ -9,7 +9,7 @@ import TagsSearch from 'component/tagsSearch';
 import { FF_MAX_CHARS_IN_DESCRIPTION } from 'constants/form-field';
 import ErrorText from 'component/common/error-text';
 import CollectionThumbnail from 'component/fileThumbnail';
-import { isNameValid } from 'lbry-redux';
+import { isNameValid, regexInvalidURI } from 'lbry-redux';
 import ClaimAbandonButton from 'component/claimAbandonButton';
 import { useHistory } from 'react-router-dom';
 import { MINIMUM_PUBLISH_BID, INVALID_NAME_ERROR, ESTIMATED_FEE } from 'constants/claim';
@@ -106,6 +106,13 @@ function CollectionForm(props: Props) {
   const primaryLanguage = Array.isArray(languageParam) && languageParam.length && languageParam[0];
   const secondaryLanguage = Array.isArray(languageParam) && languageParam.length >= 2 && languageParam[1];
 
+  const collectionClaimIdsString = JSON.stringify(collectionClaimIds);
+
+  function parseName(newName) {
+    let INVALID_URI_CHARS = new RegExp(regexInvalidURI, 'gu');
+    return newName.replace(INVALID_URI_CHARS, '-');
+  }
+
   function getCollectionParams() {
     // fill this in with sdk data
     const collectionParams: {
@@ -123,7 +130,6 @@ function CollectionForm(props: Props) {
     } = {
       thumbnail_url: thumbnailUrl,
       description,
-      title,
       bid: String(amount || 0.001),
       languages: languages || [],
       locations: locations || [],
@@ -140,15 +146,23 @@ function CollectionForm(props: Props) {
     }
 
     if (!claim) {
-      collectionParams['name'] = collectionName;
+      collectionParams['title'] = collectionName;
+      collectionParams['name'] = parseName(collectionName);
     }
 
     if (claim) {
       collectionParams['claim_id'] = claim.claim_id;
+      collectionParams['title'] = title;
     }
 
     return collectionParams;
   }
+
+  React.useEffect(() => {
+    const collectionClaimIds = JSON.parse(collectionClaimIdsString);
+    setParams({ ...params, claims: collectionClaimIds });
+  }, [collectionClaimIdsString, setParams]);
+
   function handleBidChange(bid: number) {
     const { balance, amount } = props;
     const totalAvailableBidAmount = (parseFloat(amount) || 0.0) + (parseFloat(balance) || 0.0);
@@ -229,10 +243,6 @@ function CollectionForm(props: Props) {
       setParams({ ...params, channel_id: activeChannelId });
     }
   }, [activeChannelId]);
-  //
-  // React.useEffect(() => {
-  //   clearCollectionErrors();
-  // }, [clearCollectionErrors]);
 
   return (
     <>
@@ -448,7 +458,7 @@ function CollectionForm(props: Props) {
               )}
               {!isNewCollection && (
                 <div className="section__actions">
-                  <ClaimAbandonButton uri={uri} abandonActionCallback={() => replace(`/$/${PAGES.CHANNELS}`)} />
+                  <ClaimAbandonButton uri={uri} abandonActionCallback={() => replace(`/$/${PAGES.LIBRARY}`)} />
                 </div>
               )}
             </>

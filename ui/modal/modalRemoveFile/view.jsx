@@ -29,7 +29,7 @@ function ModalRemoveFile(props: Props) {
   return (
     <Modal isOpen contentLabel={__('Confirm File Remove')} type="card" onAborted={closeModal}>
       <Card
-        title={__('Remove File')}
+        title={__('Remove Collection')}
         subtitle={
           <I18nMessage tokens={{ title: <cite>{`"${title}"`}</cite> }}>
             Are you sure you'd like to remove %title% from LBRY?

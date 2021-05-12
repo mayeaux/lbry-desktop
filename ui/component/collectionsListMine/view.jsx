@@ -22,6 +22,7 @@ export default function CollectionsListMine(props: Props) {
 
   const builtinCollectionsList = (Object.values(builtinCollections || {}): any);
   const unpublishedCollectionsList = (Object.keys(unpublishedCollections || {}): any);
+  const publishedList = (Object.keys(publishedPlaylists || {}): any);
 
   return (
     <>
@@ -37,29 +38,26 @@ export default function CollectionsListMine(props: Props) {
           </>
         );
       })}
+      <div className="claim-grid__wrapper">
+        <h1 className="claim-grid__header">
+          <span className="claim-grid__title">{__('Playlists')}</span>
+        </h1>
 
-      {unpublishedCollectionsList && unpublishedCollectionsList.length > 0 && (
         <>
-          <h1>Unpublished Playlists</h1>
           <div className="claim-grid">
             {unpublishedCollectionsList &&
+              unpublishedCollectionsList.length > 0 &&
               unpublishedCollectionsList.map((key) => (
                 <CollectionPreviewTile tileLayout collectionId={key} key={key} />
               ))}
+            {publishedList &&
+              publishedList.length > 0 &&
+              publishedList.map((key) => {
+                return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
+              })}
           </div>
         </>
-      )}
-
-      {Boolean(Object.keys(publishedPlaylists).length) && (
-        <>
-          <h1>Published Playlists</h1>
-          <div className={'claim-grid'}>
-            {(Object.keys(publishedPlaylists): any).map((key) => {
-              return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
-            })}
-          </div>
-        </>
-      )}
+      </div>
     </>
   );
 }

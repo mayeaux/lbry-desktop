@@ -5,8 +5,6 @@ import Card from 'component/common/card';
 import { FormField } from 'component/common/form';
 import * as ICONS from 'constants/icons';
 import CollectionSelectItem from 'component/collectionSelectItem';
-import { isNameValid } from 'lbry-redux';
-import { INVALID_NAME_ERROR } from 'constants/claim';
 
 type Props = {
   claim: Claim,
@@ -24,7 +22,6 @@ const ClaimCollectionAdd = (props: Props) => {
   const isChannel = claim && claim.value_type === 'channel';
 
   const [newCollectionName, setNewCollectionName] = React.useState('');
-  const [newCollectionNameError, setNewCollectionNameError] = React.useState();
 
   // TODO: when other collection types added, filter list in context
   // const isPlayable =
@@ -37,11 +34,6 @@ const ClaimCollectionAdd = (props: Props) => {
   function handleNameInput(e) {
     const { value } = e.target;
     setNewCollectionName(value);
-    if (!isNameValid(value, 'false')) {
-      setNewCollectionNameError(INVALID_NAME_ERROR);
-    } else {
-      setNewCollectionNameError();
-    }
   }
 
   function handleAddCollection() {
@@ -90,8 +82,7 @@ const ClaimCollectionAdd = (props: Props) => {
               type="text"
               name="new_collection"
               value={newCollectionName}
-              error={newCollectionNameError}
-              label={'name'}
+              label={'New Collection Title'}
               inputButton={
                 <Button
                   button={'secondary'}
