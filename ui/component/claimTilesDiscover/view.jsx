@@ -252,7 +252,7 @@ function ClaimTilesDiscover(props: Props) {
 
   const fixUris = [
     'lbry://@CrackerMilk#6/say-when#4',
-    'lbry://@Destiny#6/avenging-richard-wolff-sensible#3',
+    'lbry://@lielikesmusic#3/why-radiohead-hated-creep#0',
     'lbry://@hammyandolivia#c/dog-takes-the-trash-out-on-a-date!#2',
   ];
   if (pin && uris && uris.length > 2 && window.location.pathname === '/') {
