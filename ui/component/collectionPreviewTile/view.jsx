@@ -65,12 +65,10 @@ function CollectionPreviewTile(props: Props) {
     blockedChannelUris,
     isMature,
     showMature,
-    // editedCollection,
+    // editedCollection, // bring these in
     // pendingCollection,
     resolveCollectionItems,
   } = props;
-  // const shouldFetch = claim === undefined;
-  // const canonicalUrl = claim && claim.canonical_url; uncomment after sdk resolve fix
   const { push } = useHistory();
 
   const hasClaim = Boolean(claim);
@@ -81,30 +79,7 @@ function CollectionPreviewTile(props: Props) {
   }, [collectionId, hasClaim]);
 
   const channelUrl = channelClaim && channelClaim.permanent_url;
-  // const firstCollectionUrl = collectionItemUrls[0];
-  // let navigateUrl = firstCollectionUrl && formatLbryUrlForWeb(firstCollectionUrl);
-  // if (collectionId) {
-  //   const collectionParams = new URLSearchParams();
-  //   collectionParams.set(COLLECTIONS_CONSTS.COLLECTION_ID, collectionId);
-  //   navigateUrl = navigateUrl + `?` + collectionParams.toString();
-  // }
-  // // const navigateUrl = formatLbryUrlForWeb(permanentUrl || uri || `/$/${PAGES.COLLECTION}/${collectionId}`);
-  //
   const signingChannel = claim && claim.signing_channel;
-  // let channelThumbnail;
-  // if (signingChannel) {
-  //   channelThumbnail =
-  //     // I should be able to just pass the the uri to <ChannelThumbnail /> but it wasn't working
-  //     // Come back to me
-  //     (signingChannel.value && signingChannel.value.thumbnail && signingChannel.value.thumbnail.url) || undefined;
-  // }
-  //
-  // function handleClick(e) {
-  //   // go to first url + collectionId
-  //   if (navigateUrl) {
-  //     history.push(navigateUrl);
-  //   }
-  // }
 
   let shouldHide = false;
 
@@ -175,7 +150,6 @@ function CollectionPreviewTile(props: Props) {
               ))}
             </div>
           }
-          // actions={<ClaimAuthor uri={uri} />}
           actions={
             <div className="claim-tile-collection__info">
               {uri ? (

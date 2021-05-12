@@ -2,7 +2,6 @@ import { connect } from 'react-redux';
 import {
   makeSelectClaimIsMine,
   makeSelectClaimForUri,
-  // doPrepareEdit, // do the collection edit/publish
   selectMyChannelClaims,
   makeSelectClaimIsPending,
   makeSelectCollectionIsMine,
@@ -23,16 +22,6 @@ const select = (state, props) => ({
 
 const perform = (dispatch) => ({
   openModal: (modal, props) => dispatch(doOpenModal(modal, props)),
-  // prepareEdit: (publishData, uri, fileInfo) => {
-  //   if (publishData.signing_channel) {
-  //     dispatch(doSetIncognito(false));
-  //     dispatch(doSetActiveChannel(publishData.signing_channel.claim_id));
-  //   } else {
-  //     dispatch(doSetIncognito(true));
-  //   }
-  //
-  //   dispatch(doPrepareEdit(publishData, uri, fileInfo, fs));
-  // },
   doToast: (options) => dispatch(doToast(options)),
 });
 
