@@ -251,9 +251,9 @@ function ClaimTilesDiscover(props: Props) {
   const shouldPerformSearch = !isLoading && uris.length === 0;
 
   const fixUris = [
+    'lbry://@CrackerMilk#6/say-when#4',
     'lbry://@Destiny#6/avenging-richard-wolff-sensible#3',
-    'lbry://@CrackerMilk#6/becoming-a-psychopath#1',
-    'lbry://@hammyandolivia#c/dog-runs-from-a-dinosaur!-shorts-corgi#0',
+    'lbry://@hammyandolivia#c/dog-takes-the-trash-out-on-a-date!#2',
   ];
   if (pin && uris && uris.length > 2 && window.location.pathname === '/') {
     fixUris.forEach((fixUri) => {
