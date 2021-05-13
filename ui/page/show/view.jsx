@@ -112,7 +112,7 @@ function ShowPage(props: Props) {
   }
 
   // collection claims
-  if (claim && claim.value_type === 'collection' && collectionUrls.length) {
+  if (claim && claim.value_type === 'collection' && collectionUrls && collectionUrls.length) {
     let urlForCollectionIndex = collectionUrls && collectionUrls[collectionIndex];
 
     // if collection.type === 'playlist'

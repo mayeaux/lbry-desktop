@@ -34,14 +34,7 @@ export default function CollectionContent(props: Props) {
         </>
       }
       body={
-        <ClaimList
-          isCardBody
-          type="small"
-          // loading={isSearching}
-          uris={collectionUrls}
-          collectionId={id}
-          empty={__('Playlist is empty')}
-        />
+        <ClaimList isCardBody type="small" uris={collectionUrls} collectionId={id} empty={__('Playlist is empty')} />
       }
     />
   );

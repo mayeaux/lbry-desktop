@@ -148,7 +148,6 @@ function App(props: Props) {
   const useCustomScrollbar = !IS_MAC;
   const hasMyChannels = myChannelUrls && myChannelUrls.length > 0;
   const hasNoChannels = myChannelUrls && myChannelUrls.length === 0;
-
   const shouldMigrateLanguage = LANGUAGE_MIGRATIONS[language];
   const hasActiveChannelClaim = activeChannelClaim !== undefined;
 

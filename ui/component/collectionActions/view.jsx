@@ -6,9 +6,11 @@ import React from 'react';
 import Button from 'component/button';
 import { useIsMobile } from 'effects/use-screensize';
 import ClaimSupportButton from 'component/claimSupportButton';
+import FileReactions from 'component/fileReactions';
 import { useHistory } from 'react-router';
-import { EDIT_PAGE, PAGE_VIEW_QUERY } from '../../page/collection/view';
+import { EDIT_PAGE, PAGE_VIEW_QUERY } from 'page/collection/view';
 import classnames from 'classnames';
+import { ENABLE_FILE_REACTIONS } from 'config';
 
 type Props = {
   uri: string,
@@ -27,7 +29,6 @@ function CollectionActions(props: Props) {
   const { uri, openModal, claim, claimIsPending, isMyCollection, collectionId, showInfo, setShowInfo } = props;
   const { push } = useHistory();
   const isMobile = useIsMobile();
-  // const showDelete = claimIsMine || (fileInfo && (fileInfo.written_bytes > 0 || fileInfo.blobs_completed > 0));
   const claimId = claim && claim.claim_id;
   // We want to use the short form uri for editing
   // This is what the user is used to seeing, they don't care about the claim id
@@ -36,9 +37,10 @@ function CollectionActions(props: Props) {
 
   const lhsSection = (
     <>
-      {/* {ENABLE_FILE_REACTIONS && uri && <FileReactions uri={uri} />} */}
+      {/* Reactions didn't work - maybe only on web? */}
+      {ENABLE_FILE_REACTIONS && uri && <FileReactions uri={uri} />}
       <ClaimSupportButton uri={uri} fileAction />
-      {/* repost
+      {/* reposts need testing
               <Button
         button="alt"
         className="button--file-action"

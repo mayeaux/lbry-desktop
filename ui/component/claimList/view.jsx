@@ -162,7 +162,6 @@ export default function ClaimList(props: Props) {
               {injectedItem && index === 4 && <li>{injectedItem}</li>}
               <ClaimPreview
                 uri={uri}
-                // this (what? type? - old comment) doesn't belong here
                 type={type}
                 hideMenu={hideMenu}
                 includeSupportAction={includeSupportAction}
