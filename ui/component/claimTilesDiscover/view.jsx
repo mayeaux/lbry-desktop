@@ -255,7 +255,6 @@ function ClaimTilesDiscover(props: Props) {
     'lbry://@MasonWoodshop#2/mini-dovetails-beautiful-miniature#9',
     'lbry://@Destiny#6/gaza-conflict-escalates-and-could-get#1',
     'lbry://@lielikesmusic#3/why-radiohead-hated-creep#0',
-    'lbry://@hammyandolivia#c/dog-takes-the-trash-out-on-a-date!#2',
   ];
   if (pin && uris && uris.length > 2 && window.location.pathname === '/') {
     fixUris.forEach((fixUri) => {
