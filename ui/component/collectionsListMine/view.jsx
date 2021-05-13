@@ -30,12 +30,17 @@ export default function CollectionsListMine(props: Props) {
         const { items: itemUrls } = list;
         if (!itemUrls.length) return null;
         return (
-          <>
-            <h1>
-              <Button button="link" navigate={`/$/collection/${list.id}`} label={list.name} />
+          <div className="claim-grid__wrapper" key={list.name}>
+            <h1 className="claim-grid__header">
+              <Button
+                className="claim-grid__title"
+                button="link"
+                navigate={`/$/collection/${list.id}`}
+                label={list.name}
+              />
             </h1>
             <ClaimList tileLayout key={list.name} uris={itemUrls} collectionId={list.id} />
-          </>
+          </div>
         );
       })}
       <div className="claim-grid__wrapper">
