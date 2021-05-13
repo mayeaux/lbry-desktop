@@ -67,7 +67,7 @@ const select = (state, props) => {
     urlParams.get(COLLECTIONS_CONSTS.COLLECTION_ID) ||
     (claim && claim.value_type === 'collection' && claim.claim_id) ||
     null;
-  const collectionIndex = urlParams.get(COLLECTIONS_CONSTS.COLLECTION_INDEX);
+  const collectionIndex = urlParams.get(COLLECTIONS_CONSTS.COLLECTION_INDEX) || 0;
 
   return {
     uri,

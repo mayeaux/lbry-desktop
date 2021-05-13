@@ -112,7 +112,9 @@ function ShowPage(props: Props) {
   }
 
   // collection claims
-  if (claim && claim.value_type === 'collection') {
+  if (claim && claim.value_type === 'collection' && collectionUrls.length) {
+    let urlForCollectionIndex = collectionUrls && collectionUrls[collectionIndex];
+
     // if collection.type === 'playlist'
     //    redirect to file page
     // else
@@ -135,7 +137,7 @@ function ShowPage(props: Props) {
         {(claim === undefined ||
           isResolvingUri ||
           isResolvingCollection || // added for collection
-          (claim && claim.value_type === 'collection' && isResolvingCollection)) && ( // added for collection
+          (claim && claim.value_type === 'collection' && !urlForCollectionIndex)) && ( // added for collection
           <div className="main--empty">
             <Spinner delayed />
           </div>
