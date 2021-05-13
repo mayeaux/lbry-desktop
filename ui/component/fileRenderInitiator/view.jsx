@@ -54,9 +54,11 @@ export default function FileRenderInitiator(props: Props) {
     videoTheaterMode,
   } = props;
 
+  // force autoplay if a timestamp is present
   let autoplay = props.autoplay;
-
+  // get current url
   const url = window.location.href;
+  // check if there is a time parameter, if so force autoplay
   if (url.indexOf('t=')) {
     autoplay = true;
   }
