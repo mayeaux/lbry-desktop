@@ -23,6 +23,7 @@ export default function CollectionsListMine(props: Props) {
   const builtinCollectionsList = (Object.values(builtinCollections || {}): any);
   const unpublishedCollectionsList = (Object.keys(unpublishedCollections || {}): any);
   const publishedList = (Object.keys(publishedPlaylists || {}): any);
+  const hasCollections = unpublishedCollectionsList.length || publishedList.length;
 
   return (
     <>
@@ -43,26 +44,28 @@ export default function CollectionsListMine(props: Props) {
           </div>
         );
       })}
-      <div className="claim-grid__wrapper">
-        <h1 className="claim-grid__header">
-          <span className="claim-grid__title">{__('Playlists')}</span>
-        </h1>
+      {hasCollections && (
+        <div className="claim-grid__wrapper">
+          <h1 className="claim-grid__header">
+            <span className="claim-grid__title">{__('Playlists')}</span>
+          </h1>
 
-        <>
-          <div className="claim-grid">
-            {unpublishedCollectionsList &&
-              unpublishedCollectionsList.length > 0 &&
-              unpublishedCollectionsList.map((key) => (
-                <CollectionPreviewTile tileLayout collectionId={key} key={key} />
-              ))}
-            {publishedList &&
-              publishedList.length > 0 &&
-              publishedList.map((key) => {
-                return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
-              })}
-          </div>
-        </>
-      </div>
+          <>
+            <div className="claim-grid">
+              {unpublishedCollectionsList &&
+                unpublishedCollectionsList.length > 0 &&
+                unpublishedCollectionsList.map((key) => (
+                  <CollectionPreviewTile tileLayout collectionId={key} key={key} />
+                ))}
+              {publishedList &&
+                publishedList.length > 0 &&
+                publishedList.map((key) => {
+                  return <CollectionPreviewTile tileLayout collectionId={key} key={key} />;
+                })}
+            </div>
+          </>
+        </div>
+      )}
     </>
   );
 }
