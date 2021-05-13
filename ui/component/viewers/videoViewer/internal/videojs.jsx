@@ -172,7 +172,6 @@ properties for this component should be kept to ONLY those that if changed shoul
  */
 export default React.memo<Props>(function VideoJs(props: Props) {
   const {
-    autoplay,
     startMuted,
     source,
     sourceType,
@@ -182,6 +181,13 @@ export default React.memo<Props>(function VideoJs(props: Props) {
     toggleVideoTheaterMode,
     adUrl,
   } = props;
+
+  let autoplay = props.autoplay;
+
+  const url = window.location.href;
+  if (url.indexOf('t=')) {
+    autoplay = true;
+  }
 
   const [reload, setReload] = useState('initial');
   const playerRef = useRef();

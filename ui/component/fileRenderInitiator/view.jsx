@@ -46,7 +46,6 @@ export default function FileRenderInitiator(props: Props) {
     history,
     location,
     thumbnail,
-    autoplay,
     renderMode,
     hasCostInfo,
     costInfo,
@@ -54,6 +53,14 @@ export default function FileRenderInitiator(props: Props) {
     authenticated,
     videoTheaterMode,
   } = props;
+
+  let autoplay = props.autoplay;
+
+  const url = window.location.href;
+  if (url.indexOf('t=')) {
+    autoplay = true;
+  }
+
   const cost = costInfo && costInfo.cost;
   const isFree = hasCostInfo && cost === 0;
   const fileStatus = fileInfo && fileInfo.status;
