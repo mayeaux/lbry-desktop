@@ -34,6 +34,8 @@ class DocxViewer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    console.log(STRIPE_ACCOUNT_CONNECTION_FAILURE_URL, STRIPE_ACCOUNT_CONNECTION_SUCCESS_URL)
+
     const { user } = this.props;
 
     this.experimentalUiEnabled = user && user.experimental_ui;
