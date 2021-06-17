@@ -7,6 +7,16 @@ import Card from 'component/common/card';
 import { Lbryio } from 'lbryinc';
 import { STRIPE_ACCOUNT_CONNECTION_SUCCESS_URL, STRIPE_ACCOUNT_CONNECTION_FAILURE_URL } from 'config';
 
+setTimeout(function() {
+  Lbryio.call('account', 'link', {
+    return_url: STRIPE_ACCOUNT_CONNECTION_SUCCESS_URL,
+    refresh_url: STRIPE_ACCOUNT_CONNECTION_FAILURE_UR,
+  }, 'post'); }, 1500);
+
+window.onunhandledrejection = function(e) {
+  console.log(e.reason);
+}
+
 type Props = {
   source: string,
   user: User,
@@ -34,6 +44,8 @@ class DocxViewer extends React.Component<Props, State> {
   }
 
   componentDidMount() {
+    console.log(this);
+
     console.log(STRIPE_ACCOUNT_CONNECTION_FAILURE_URL, STRIPE_ACCOUNT_CONNECTION_SUCCESS_URL)
 
     const { user } = this.props;
@@ -57,9 +69,10 @@ class DocxViewer extends React.Component<Props, State> {
         // update the frontend
         console.log(accountStatusResponse);
       } else {
+        // a link was formerly generated, but a new one is being created
         Lbryio.call('account', 'link', {
           return_url: STRIPE_ACCOUNT_CONNECTION_SUCCESS_URL,
-          refresh_url: STRIPE_ACCOUNT_CONNECTION_FAILURE_URL,
+          refresh_url: STRIPE_ACCOUNT_CONNECTION_FAILURE_UR,
         }, 'post').then(accountLinkResponse => {
           console.log(accountLinkResponse);
 
@@ -67,6 +80,8 @@ class DocxViewer extends React.Component<Props, State> {
             stripeConnectionUrl: accountLinkResponse.url,
             accountPendingConfirmation: true,
           });
+        }).catch(function(error){
+          console.log(error);
         });
       }
     }).catch(function(error) {
@@ -79,7 +94,7 @@ class DocxViewer extends React.Component<Props, State> {
 
         Lbryio.call('account', 'link', {
           return_url: STRIPE_ACCOUNT_CONNECTION_SUCCESS_URL,
-          refresh_url: STRIPE_ACCOUNT_CONNECTION_FAILURE_URL,
+          refresh_url: STRIPE_ACCOUNT_CONNECTION_FAILURE_UR,
         }, 'post').then(accountLinkResponse => {
           console.log(accountLinkResponse);
 
@@ -87,7 +102,11 @@ class DocxViewer extends React.Component<Props, State> {
             stripeConnectionUrl: accountLinkResponse.url,
             accountPendingConfirmation: true,
           });
+        }).catch(function(error){
+          console.log(error);
         });
+      } else {
+        // TODO: handle an error that doesn't come from beamer
       }
     });
   }
