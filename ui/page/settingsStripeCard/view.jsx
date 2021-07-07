@@ -474,6 +474,7 @@ class CardVerify extends React.Component<Props, State> {
                     <tr>
                       <th className="date-header">{__('Date')}</th>
                       <th>{<>{__('Receiving Channel Name')}</>}</th>
+                      <th>{__('Tip Location')}</th>
                       <th>{__('Amount (USD)')} </th>
                       <th>{__('Anonymous')}</th>
                     </tr>
@@ -482,11 +483,20 @@ class CardVerify extends React.Component<Props, State> {
                     {customerTransactions &&
                     customerTransactions.reverse().map((transaction) => (
                       <tr key={transaction.name + transaction.created_at}>
-                        <td>{moment(transaction.created_at).format('LLL')}</td><td>
+                        <td>{moment(transaction.created_at).format('LLL')}</td>
+                        <td>
                           <Button
                             className="stripe__card-link-text"
                             navigate={'/' + transaction.channel_name + ':' + transaction.channel_claim_id}
                             label={transaction.channel_name}
+                            button="link"
+                          />
+                        </td>
+                        <td>
+                          <Button
+                            className="stripe__card-link-text"
+                            navigate={'/' + transaction.channel_name + ':' + transaction.source_claim_id}
+                            label={transaction.channel_claim_id === transaction.source_claim_id ? 'Channel Page' : 'File Page'}
                             button="link"
                           />
                         </td>
