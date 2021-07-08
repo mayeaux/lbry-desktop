@@ -64,6 +64,7 @@ const ModalRemoveBtcSwapAddress = React.lazy(() =>
 );
 const ModalRemoveFile = React.lazy(() => import('modal/modalRemoveFile' /* webpackChunkName: "modalRemoveFile" */));
 const ModalRevokeClaim = React.lazy(() => import('modal/modalRevokeClaim' /* webpackChunkName: "modalRevokeClaim" */));
+const ModalRemoveCard = React.lazy(() => import('modal/modalRemoveCard' /* webpackChunkName: "modalRemoveCard" */));
 const ModalRewardCode = React.lazy(() => import('modal/modalRewardCode' /* webpackChunkName: "modalRewardCode" */));
 const ModalSendTip = React.lazy(() => import('modal/modalSendTip' /* webpackChunkName: "modalSendTip" */));
 const ModalSetReferrer = React.lazy(() => import('modal/modalSetReferrer' /* webpackChunkName: "modalSetReferrer" */));
@@ -138,6 +139,8 @@ function ModalRouter(props: Props) {
         return ModalAffirmPurchase;
       case MODALS.CONFIRM_CLAIM_REVOKE:
         return ModalRevokeClaim;
+      case MODALS.CONFIRM_REMOVE_CARD:
+        return ModalRemoveCard;
       case MODALS.PHONE_COLLECTION:
         return ModalPhoneCollection;
       case MODALS.FIRST_SUBSCRIPTION:
