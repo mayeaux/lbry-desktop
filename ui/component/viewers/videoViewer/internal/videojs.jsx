@@ -14,6 +14,12 @@ import recsys from './plugins/videojs-recsys/plugin';
 import qualityLevels from 'videojs-contrib-quality-levels';
 import isUserTyping from 'util/detect-typing';
 // import './plugins/videojs-aniview/plugin';
+import './plugins/videojs-sprite-thumbnails/plugin';
+
+// TODO: add plugin for thumbnail preview here
+
+
+
 
 const isDev = process.env.NODE_ENV !== 'production';
 
@@ -212,12 +218,19 @@ export default React.memo<Props>(function VideoJs(props: Props) {
     plugins: {
       eventTracking: true,
       overlay: OVERLAY.OVERLAY_DATA,
+      spriteThumbnails: {
+        interval: 5, // (default)
+        url: '/public/img/sample11.png',
+        width: 240,
+        height: 100,
+      },
     },
+    tracks: [{src: '/public/img/darkhorse.vtt', kind:'captions', srclang: 'en', label: 'English'}],
     // fixes problem of errant CC button showing up on iOS
     // the true fix here is to fix the m3u8 file, see: https://github.com/lbryio/lbry-desktop/pull/6315
-    controlBar: {
-      subsCapsButton: false,
-    },
+    // controlBar: {
+    //   subsCapsButton: false,
+    // },
   };
 
   const tapToUnmuteRef = useRef();

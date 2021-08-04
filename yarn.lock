@@ -16590,6 +16590,14 @@ videojs-logo@^2.1.4:
     global "^4.3.2"
     video.js "^6 || ^7"
 
+videojs-sprite-thumbnails@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/videojs-sprite-thumbnails/-/videojs-sprite-thumbnails-0.5.3.tgz#0cfd3fbd8435973aefdf43d81329b9704e323a6e"
+  integrity sha512-UJT9wzAZjJkSPf9qzTWi+i+9zmePxgVfkGFSpELOzQSnAw2MGChILNYtsf/bda5SrSCd8pRrSnubxxuugJQ9FA==
+  dependencies:
+    global "^4.3.2"
+    video.js "^6 || ^7"
+
 videojs-vtt.js@^0.15.2, videojs-vtt.js@^0.15.3:
   version "0.15.3"
   resolved "https://registry.yarnpkg.com/videojs-vtt.js/-/videojs-vtt.js-0.15.3.tgz#84260393b79487fcf195d9372f812d7fab83a993"

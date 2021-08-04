@@ -64,7 +64,8 @@
     "tempy": "^0.6.0",
     "videojs-contrib-ads": "^6.9.0",
     "videojs-ima": "^1.11.0",
-    "videojs-logo": "^2.1.4"
+    "videojs-logo": "^2.1.4",
+    "videojs-sprite-thumbnails": "^0.5.3"
   },
   "devDependencies": {
     "@babel/core": "^7.0.0",
