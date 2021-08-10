@@ -6,11 +6,11 @@ import Page from 'component/page';
 import Card from 'component/common/card';
 import { Lbryio } from 'lbryinc';
 import { STRIPE_PUBLIC_KEY } from 'config';
-import moment from 'moment';
 import Plastic from 'react-plastic';
 import Button from 'component/button';
 import * as ICONS from 'constants/icons';
 import * as MODALS from 'constants/modal_types';
+import * as PAGES from 'constants/pages';
 
 let stripeEnvironment = 'test';
 // if the key contains pk_live it's a live key
@@ -18,6 +18,9 @@ let stripeEnvironment = 'test';
 if (STRIPE_PUBLIC_KEY.indexOf('pk_live') > -1) {
   stripeEnvironment = 'live';
 }
+
+const APIS_DOWN_ERROR_RESPONSE = 'There was an error from the server, please let support know';
+const CARD_SETUP_ERROR_RESPONSE = 'There was an error getting your card setup, please let support know';
 
 // eslint-disable-next-line flowtype/no-types-missing-file-annotation
 type Props = {
@@ -181,8 +184,6 @@ class SettingsStripeCard extends React.Component<Props, State> {
               },
               'post'
             ).then((customerSetupResponse) => {
-              console.log(customerSetupResponse);
-
               clientSecret = customerSetupResponse.client_secret;
 
               // instantiate stripe elements
@@ -190,14 +191,10 @@ class SettingsStripeCard extends React.Component<Props, State> {
             });
             // 500 error from the backend being down
           } else if (error === 'internal_apis_down') {
-            var displayString = 'There was an error from the server, please let support know';
-            doToast({ message: displayString, isError: true });
+            doToast({ message: APIS_DOWN_ERROR_RESPONSE, isError: true });
           } else {
             // probably an error from stripe
-            var displayString = 'There was an error getting your card setup, please let support know';
-            doToast({ message: displayString, isError: true });
-
-            console.log('Unseen before error');
+            doToast({ message: CARD_SETUP_ERROR_RESPONSE, isError: true });
           }
         });
     }, 250);
@@ -371,7 +368,7 @@ class SettingsStripeCard extends React.Component<Props, State> {
 
     const { scriptFailedToLoad, openModal } = this.props;
 
-    const { currentFlowStage, customerTransactions, pageTitle, userCardDetails, paymentMethodId } = this.state;
+    const { currentFlowStage, pageTitle, userCardDetails, paymentMethodId } = this.state;
 
     return (
       <Page backout={{ title: pageTitle, backLabel: __('Done') }} noFooter noSideNavigation>
@@ -435,71 +432,17 @@ class SettingsStripeCard extends React.Component<Props, State> {
                   />
                 </>
               }
+              actions={
+                <Button
+                  button="primary"
+                  label={__('View Transactions')}
+                  icon={ICONS.SETTINGS}
+                  navigate={`/$/${PAGES.WALLET}?tab=payment-history`}
+                />
+              }
             />
             <br />
-
-            {/* if a user has no transactions yet */}
-            {(!customerTransactions || customerTransactions.length === 0) && (
-              <Card
-                title={__('Tip History')}
-                subtitle={__('You have not sent any tips yet. When you do they will appear here. ')}
-              />
-            )}
           </div>
-        )}
-
-        {/* customer already has transactions */}
-        {customerTransactions && customerTransactions.length > 0 && (
-          <Card
-            title={__('Tip History')}
-            body={
-              <>
-                <div className="table__wrapper">
-                  <table className="table table--transactions">
-                    <thead>
-                      <tr>
-                        <th className="date-header">{__('Date')}</th>
-                        <th>{<>{__('Receiving Channel Name')}</>}</th>
-                        <th>{__('Tip Location')}</th>
-                        <th>{__('Amount (USD)')} </th>
-                        <th>{__('Anonymous')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {customerTransactions &&
-                        customerTransactions.reverse().map((transaction) => (
-                          <tr key={transaction.name + transaction.created_at}>
-                            <td>{moment(transaction.created_at).format('LLL')}</td>
-                            <td>
-                              <Button
-                                className="stripe__card-link-text"
-                                navigate={'/' + transaction.channel_name + ':' + transaction.channel_claim_id}
-                                label={transaction.channel_name}
-                                button="link"
-                              />
-                            </td>
-                            <td>
-                              <Button
-                                className="stripe__card-link-text"
-                                navigate={'/' + transaction.channel_name + ':' + transaction.source_claim_id}
-                                label={
-                                  transaction.channel_claim_id === transaction.source_claim_id
-                                    ? 'Channel Page'
-                                    : 'File Page'
-                                }
-                                button="link"
-                              />
-                            </td>
-                            <td>${transaction.tipped_amount / 100}</td>
-                            <td>{transaction.private_tip ? 'Yes' : 'No'}</td>
-                          </tr>
-                        ))}
-                    </tbody>
-                  </table>
-                </div>
-              </>
-            }
-          />
         )}
       </Page>
     );

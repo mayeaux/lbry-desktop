@@ -22,8 +22,6 @@ type Props = {
   fetchingComments: boolean,
   doSuperChatList: (string) => void,
   superChats: Array<Comment>,
-  superChatsTotalAmount: number,
-  superChatsFiatAmount: number,
   myChannels: ?Array<ChannelClaim>,
 };
 
@@ -39,23 +37,23 @@ export default function LivestreamComments(props: Props) {
     embed,
     doCommentSocketConnect,
     doCommentSocketDisconnect,
-    comments, // superchats in chronological format
+    comments: commentsByChronologicalOrder,
     doCommentList,
     fetchingComments,
     doSuperChatList,
     myChannels,
-    superChats, // superchats organized by tip amount
+    superChats: superChatsByTipAmount,
   } = props;
 
-  let { superChatsFiatAmount, superChatsTotalAmount } = props;
+  let superChatsFiatAmount, superChatsTotalAmount;
 
   const commentsRef = React.createRef();
   const [scrollBottom, setScrollBottom] = React.useState(true);
   const [viewMode, setViewMode] = React.useState(VIEW_MODE_CHAT);
   const [performedInitialScroll, setPerformedInitialScroll] = React.useState(false);
   const claimId = claim && claim.claim_id;
-  const commentsLength = comments && comments.length;
-  const commentsToDisplay = viewMode === VIEW_MODE_CHAT ? comments : superChats;
+  const commentsLength = commentsByChronologicalOrder && commentsByChronologicalOrder.length;
+  const commentsToDisplay = viewMode === VIEW_MODE_CHAT ? commentsByChronologicalOrder : superChatsByTipAmount;
 
   const discussionElement = document.querySelector('.livestream__comments');
   const commentElement = document.querySelector('.livestream-comment');
@@ -106,10 +104,10 @@ export default function LivestreamComments(props: Props) {
   }, [commentsLength, discussionElement, handleScroll, performedInitialScroll, setPerformedInitialScroll]);
 
   // sum total amounts for fiat tips and lbc tips
-  if (superChats) {
+  if (superChatsByTipAmount) {
     let fiatAmount = 0;
     let LBCAmount = 0;
-    for (const superChat of superChats) {
+    for (const superChat of superChatsByTipAmount) {
       if (superChat.is_fiat) {
         fiatAmount = fiatAmount + superChat.support_amount;
       } else {
@@ -123,8 +121,8 @@ export default function LivestreamComments(props: Props) {
 
   let superChatsReversed;
   // array of superchats organized by fiat or not first, then support amount
-  if (superChats) {
-    const clonedSuperchats = JSON.parse(JSON.stringify(superChats));
+  if (superChatsByTipAmount) {
+    const clonedSuperchats = JSON.parse(JSON.stringify(superChatsByTipAmount));
 
     // sort by fiat first then by support amount
     superChatsReversed = clonedSuperchats.sort(function(a, b) {
@@ -165,7 +163,7 @@ export default function LivestreamComments(props: Props) {
     <div className="card livestream__discussion">
       <div className="card__header--between livestream-discussion__header">
         <div className="livestream-discussion__title">{__('Live discussion')}</div>
-        {superChatsTotalAmount > 0 && (
+        {(superChatsTotalAmount || 0) > 0 && (
           <div className="recommended-content__toggles">
 
             {/* the superchats in chronological order button */}
@@ -189,8 +187,8 @@ export default function LivestreamComments(props: Props) {
               })}
               label={
                 <>
-                  <CreditAmount amount={superChatsTotalAmount} size={8} /> /
-                  <CreditAmount amount={superChatsFiatAmount} size={8} isFiat /> {' '}{__('Tipped')}
+                  <CreditAmount amount={superChatsTotalAmount || 0} size={8} /> /
+                  <CreditAmount amount={superChatsFiatAmount || 0} size={8} isFiat /> {' '}{__('Tipped')}
                 </>
               }
               onClick={function() {
@@ -204,16 +202,16 @@ export default function LivestreamComments(props: Props) {
         )}
       </div>
       <>
-        {fetchingComments && !comments && (
+        {fetchingComments && !commentsByChronologicalOrder && (
           <div className="main--empty">
             <Spinner />
           </div>
         )}
         <div ref={commentsRef} className="livestream__comments-wrapper">
-          {viewMode === VIEW_MODE_CHAT && superChatsTotalAmount > 0 && superChats && (
+          {viewMode === VIEW_MODE_CHAT && superChatsByTipAmount && (superChatsTotalAmount || 0) > 0 && (
             <div className="livestream-superchats__wrapper">
               <div className="livestream-superchats__inner">
-                {superChats.map((superChat: Comment) => (
+                {superChatsByTipAmount.map((superChat: Comment) => (
                   <Tooltip key={superChat.comment_id} label={superChat.comment}>
                     <div className="livestream-superchat">
                       <div className="livestream-superchat__thumbnail">
@@ -237,7 +235,7 @@ export default function LivestreamComments(props: Props) {
           )}
 
           {/* top to bottom comment display */}
-          {!fetchingComments && comments.length > 0 ? (
+          {!fetchingComments && commentsByChronologicalOrder.length > 0 ? (
             <div className="livestream__comments">
               {viewMode === VIEW_MODE_CHAT && commentsToDisplay.map((comment) => (
                 <LivestreamComment
