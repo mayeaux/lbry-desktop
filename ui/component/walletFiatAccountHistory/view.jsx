@@ -11,6 +11,7 @@ import Icon from 'component/common/icon';
 import LbcSymbol from 'component/common/lbc-symbol';
 import I18nMessage from 'component/i18nMessage';
 import { formatNumberWithCommas } from 'util/number';
+import Paginate from 'component/common/paginate';
 import { Lbryio } from 'lbryinc';
 import moment from 'moment';
 
@@ -116,12 +117,14 @@ const WalletBalance = (props: Props) => {
                 ))}
                 </tbody>
               </table>
+              <Paginate totalPages={Math.ceil(accountTransactions / Number(10))} />
               {!accountTransactions && <p style={{textAlign:"center", marginTop: '20px', fontSize: '13px', color: 'rgb(171, 171, 171)'}}>No Transactions</p>}
             </div>
           </>
       )}
     />
 
+  {/* subscriptions section */}
   <Card
     title={__('Subscriptions')}
     body={

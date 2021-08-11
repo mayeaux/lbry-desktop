@@ -13,6 +13,9 @@ import I18nMessage from 'component/i18nMessage';
 import { formatNumberWithCommas } from 'util/number';
 import { Lbryio } from 'lbryinc';
 import moment from 'moment';
+import Paginate from 'component/common/paginate';
+import { useLocation, Switch } from 'react-router-dom';
+
 
 type Props = {
   accountDetails: any,
@@ -47,11 +50,19 @@ const WalletBalance = (props: Props) => {
   const [paymentHistoryTransactions, setPaymentHistoryTransactions] = React.useState();
   const [subscriptions, setSubscriptions] = React.useState();
   const [totalTippedAmount, setTotalTippedAmount] = React.useState(0);
+  const [transactionsToShow, setTransactionsToShow] = React.useState();
 
 
   const [lastFour, setLastFour] = React.useState();
 
   var environment = 'test';
+
+  const location = useLocation();
+
+  React.useEffect(() => {
+    console.log('Location changed');
+    console.log(location);
+  }, [location]);
 
   function getPaymentHistory() {
     return Lbryio.call(
@@ -84,6 +95,10 @@ const WalletBalance = (props: Props) => {
         const customerStatusResponse = await getCustomerStatus();
 
         setLastFour(customerStatusResponse.PaymentMethods[0].card.last4);
+
+        // if (response && response.length > 10) setTransactionsToShow(response);
+
+
 
         if (response && response.length > 10) response.length = 10;
 
@@ -123,7 +138,7 @@ const WalletBalance = (props: Props) => {
                 </thead>
                 <tbody>
                 {accountTransactions &&
-                accountTransactions.map((transaction) => (
+                transactionsToShow.map((transaction) => (
                   <tr key={transaction.name + transaction.created_at}>
                     <td>{moment(transaction.created_at).format('LLL')}</td>
                     <td>
@@ -155,10 +170,12 @@ const WalletBalance = (props: Props) => {
               </table>
               {(!accountTransactions || accountTransactions.length === 0) && <p style={{textAlign:"center", marginTop: '20px', fontSize: '13px', color: 'rgb(171, 171, 171)'}}>No Transactions</p>}
             </div>
+            <Paginate customParam={'pages'} totalPages={5} />
           </>
         }
       />
 
+    {/* subscriptions section */}
     <Card
       title={__('Subscriptions')}
       body={

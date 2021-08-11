@@ -180,6 +180,7 @@ function TxoList(props: Props) {
   const paramsString = JSON.stringify(params);
 
   useEffect(() => {
+    console.log('RUNNING HERE!!!');
     if (paramsString && updateTxoPageParams) {
       const params = JSON.parse(paramsString);
       updateTxoPageParams(params);
@@ -291,7 +292,7 @@ function TxoList(props: Props) {
             </div>
           </div>
           <TransactionListTable txos={txoPage} />
-          <Paginate totalPages={Math.ceil(txoItemCount / Number(pageSize))} />
+          <Paginate customParam={'page'} totalPages={Math.ceil(txoItemCount / Number(pageSize))} />
         </div>
       }
     />
