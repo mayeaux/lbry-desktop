@@ -14,7 +14,7 @@ import { formatNumberWithCommas } from 'util/number';
 import { Lbryio } from 'lbryinc';
 import moment from 'moment';
 import Paginate from 'component/common/paginate';
-import { useLocation, Switch } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 
 
 type Props = {
@@ -58,11 +58,35 @@ const WalletBalance = (props: Props) => {
   var environment = 'test';
 
   const location = useLocation();
+  const params = useParams();
 
   React.useEffect(() => {
     console.log('Location changed');
     console.log(location);
-  }, [location]);
+
+    const pages = new URLSearchParams(location.search).get('pages');
+    console.log(pages);
+
+    const sliceIndex = (pages - 1) * 10;
+
+    console.log(sliceIndex);
+
+    if(paymentHistoryTransactions){
+      let arrayToSlice = paymentHistoryTransactions.slice(0);
+
+      console.log('asdfasdf')
+
+      console.log(paymentHistoryTransactions);
+      console.log(arrayToSlice);
+
+      const slicedArray = arrayToSlice.slice(sliceIndex, sliceIndex + 10)
+      console.log(slicedArray);
+
+      setTransactionsToShow(slicedArray);
+    }
+
+    // console.log(this.props);
+  }, [location, paymentHistoryTransactions]);
 
   function getPaymentHistory() {
     return Lbryio.call(
@@ -96,13 +120,14 @@ const WalletBalance = (props: Props) => {
 
         setLastFour(customerStatusResponse.PaymentMethods[0].card.last4);
 
-        // if (response && response.length > 10) setTransactionsToShow(response);
+        // if (response && response.length > 10) response.length = 10;
 
-
-
-        if (response && response.length > 10) response.length = 10;
+        console.log('response made');
+        console.log(response);
 
         setPaymentHistoryTransactions(response);
+
+        // if (response && response.length > 10) setTransactionsToShow(response.slice(0, 10));
 
         const subscriptions  = [...response];
 
@@ -137,7 +162,7 @@ const WalletBalance = (props: Props) => {
                 </tr>
                 </thead>
                 <tbody>
-                {accountTransactions &&
+                {transactionsToShow &&
                 transactionsToShow.map((transaction) => (
                   <tr key={transaction.name + transaction.created_at}>
                     <td>{moment(transaction.created_at).format('LLL')}</td>
