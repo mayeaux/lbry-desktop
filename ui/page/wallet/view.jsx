@@ -159,6 +159,12 @@ const WalletPage = (props: Props) => {
     <>
       {/* @if TARGET='web' */}
       <Page>
+        <div className="section card-stack">
+        <WalletBalance />
+        <div style={{paddingTop: '25px'}}></div>
+        </div>
+
+        {/* tabs to select between lbc wallet, account history and payment history */}
         <Tabs onChange={onTabChange} index={tabIndex}>
           <TabList className="tabs__list--collection-edit-page">
             <Tab>{__('LBRY Credits')}</Tab>
@@ -182,7 +188,6 @@ const WalletPage = (props: Props) => {
                         <YrblWalletEmpty includeWalletLink />
                       ) : (
                         <div className="card-stack">
-                          <WalletBalance />
                           <TxoList search={search} />
                         </div>
                       )}
